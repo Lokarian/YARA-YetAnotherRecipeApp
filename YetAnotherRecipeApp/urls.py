@@ -19,6 +19,8 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LogoutView
 from users.views import register_request
 from django.contrib.auth.decorators import login_required
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +29,4 @@ urlpatterns = [
     path("", include("django.contrib.auth.urls")),
     path('', include('recipes.urls')),
     path("__reload__/", include("django_browser_reload.urls")),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

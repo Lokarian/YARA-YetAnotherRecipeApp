@@ -1,5 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
+
+
+def filename_with_uuid(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return 'uploads/' + filename
 
 
 # Create your models here.
@@ -7,7 +14,7 @@ from django.contrib.auth.models import User
 class Recipe(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    # image = models.ImageField(upload_to='images/recipes/')
+    image = models.ImageField(upload_to=filename_with_uuid, null=True, blank=True)
     ingredients = models.ManyToManyField('Ingredient')
     steps = models.ManyToManyField('RecipeStep')
     # each recipe has to be in one recipe book

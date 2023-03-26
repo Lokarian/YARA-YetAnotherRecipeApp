@@ -1,0 +1,5 @@
+django
+django-tailwind
+django_browser_reload
+pillow
+django-cleanup
