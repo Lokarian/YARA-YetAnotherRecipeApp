@@ -5,11 +5,11 @@
         <div class="">
             {% for recipe in object_list %}
                 <div class="bg-card h-40 p-8 shadow-md rounded-xl overflow-hidden flex flex-row">
-                    <img class="h-full aspect-square rounded-lg object-cover object-center" src="{{ recipe.image.url }}"
+                    <img class="h-full aspect-[1/1] rounded-2xl object-cover object-center" src="{{ recipe.image.url }}"
                          alt="{{ recipe.title }}">
-                    <div class="px-4 py-4">
-                        <h2 class="text-xl text-text  font-bold mb-2">{{ recipe.title }}</h2>
-                        <p class="text-gray-700 text-base">{{ recipe.description }}</p>
+                    <div class="pl-4 flex flex-col">
+                        <h1 class="text-xl text-text  font-bold mb-2">{{ recipe.title }}</h1>
+                        <p class="flex-1 text-primary text-base overflow-auto">{{ recipe.description }}</p>
                     </div>
                 </div>
             {% endfor %}
