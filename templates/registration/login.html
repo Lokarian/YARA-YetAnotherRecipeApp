@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% comment %}login page using tailwind{% endcomment %}
+{% block content %}
+    <div class="flex flex-col items-center justify-center h-screen">
+        <div class="flex flex-col items-center justify-center mb-20 ">
+            <h1 class="text-2xl font-bold text-text ">Yet Another Recipe App</h1>
+        </div>
+        <div>
+            <form method="post" class="bg-card shadow-md rounded-3xl px-8 pt-6 pb-8 mb-4">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-text text-sm font-bold mb-2" for="{{ form.username.id_for_label }}">
+                        Username
+                    </label>
+                    {% comment %}<input class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+                           id="{{ form.username.id_for_label }}" value="{{ form.username.value|default:'' }}" type="text" placeholder="Username">{% endcomment %}
+                    <input type="{{ form.username.field.widget.input_type }}" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value|default:'' }}" class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight" placeholder="Username">
+                    {% if form.username.errors %}
+                        <p class="text-warning text-xs italic">{{ form.username.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-text text-sm font-bold mb-2" for="{{ form.password.id_for_label }}">
+                        Password
+                    </label>
+                <input type="{{ form.password.field.widget.input_type }}" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}" value="{{ form.password.value|default:'' }}" class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight mb-3" placeholder="***********">
+                    {% if form.password.errors %}
+                        <p class="text-warning text-xs italic">{{ form.password.errors.0 }}
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="flex items-center justify-around">
+                    <button class="bg-primary hover:bg-text text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            type="submit">
+                        Log In
+                    </button>
+                    <a class="inline-block align-baseline font-bold text-sm text-text hover:text-primary" href="/register">
+                        Register
+                    </a>
+                </div>
+            </form>
+            <p class="text-center text-gray-500 text-xs">
+                &copy;2020 Acme Corp. All rights reserved.
+            </p>
+        </div>
+    </div>
+{% endblock %}
