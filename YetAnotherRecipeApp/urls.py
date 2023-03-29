@@ -23,10 +23,8 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("register/", register_request, name="register"),
-    path("logout/", LogoutView.as_view(next_page="/login"), name="logout"),
-    path("", include("django.contrib.auth.urls")),
-    path('', include('recipes.urls')),
-    path("__reload__/", include("django_browser_reload.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                  path('admin/', admin.site.urls),
+                  path("", include("django.contrib.auth.urls")),
+                  path('api/', include('recipes.urls')),
+                  path('api/', include('users.urls')),
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

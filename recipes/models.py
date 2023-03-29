@@ -24,23 +24,21 @@ class Recipe(models.Model):
         return self.title
 
 
-class Produce(models.Model):
+class Ingredient(models.Model):
     name = models.CharField(max_length=200)
-
-    # image = models.ImageField(upload_to='images/produce/')
+    amount = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.name
-
-
-class Ingredient(models.Model):
-    produce = models.ForeignKey(Produce, on_delete=models.DO_NOTHING)
-    amount = models.CharField(max_length=200)
+        return self.amount + ' x ' + self.name
 
 
 class RecipeStep(models.Model):
     description = models.TextField()
+
     # image = models.ImageField(upload_to='images/recipe_steps/')
+
+    def __str__(self):
+        return self.description[:50] + '...' if len(self.description) > 50 else self.description
 
 
 class RecipeBook(models.Model):
@@ -52,6 +50,9 @@ class RecipeBook(models.Model):
     def recipes(self):
         return self.recipe_set.all()
 
+    def __str__(self):
+        return self.title
+
 
 class RecipeBookAccess(models.Model):
     ACCESS_LEVELS = (
@@ -61,3 +62,6 @@ class RecipeBookAccess(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     recipebook = models.ForeignKey(RecipeBook, on_delete=models.CASCADE)
     access_level = models.CharField(max_length=1, choices=ACCESS_LEVELS)
+
+    def __str__(self):
+        return f'{self.recipebook} - {self.access_level}'

@@ -1,0 +1,99 @@
+{% extends "recipes/with_navbar.html" %}
+{% block page %}
+    <div class="container mx-auto px-4 py-6">
+        <h1 class="text-3xl text-center font-bold mb-6">Create New Recipe</h1>
+        <form method="post" class="bg-card shadow-md rounded-3xl px-8 pt-6 pb-8 mb-4">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block text-text text-sm font-bold mb-2" for="{{ form.title.id_for_label }}">
+                    Name
+                </label>
+                <input type="{{ form.title.field.widget.input_type }}" name="{{ form.title.name }}"
+                       id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}"
+                       class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+                       placeholder="Name of the recipe">
+                {% if form.title.errors %}
+                    <p class="text-warning text-xs italic">{{ form.title.errors }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <label class="block text-text text-sm font-bold mb-2" for="{{ form.description.id_for_label }}">
+                    Description
+                </label>
+                <textarea type="{{ form.description.field.widget.input_type }}" name="{{ form.description.name }}"
+                          id="{{ form.description.id_for_label }}" rows="5"
+                          class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+                          placeholder="Description">{{ form.description.value|default:'' }}</textarea>
+                {% if form.description.errors %}
+                    <p class="text-warning text-xs italic">{{ form.description.errors }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <label class="block text-text text-sm font-bold mb-2" for="{{ form.image.id_for_label }}">
+                    Image
+                </label>
+                <input type="{{ form.image.field.widget.input_type }}" name="{{ form.image.name }}"
+                       id="{{ form.image.id_for_label }}" value="{{ form.image.value|default:'' }}"
+                       class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight bg-white file:bg-success file:h-full pl-0 py-0 h-9 file:border-0 file:text-text border-solid border"
+                       accept="image/*"
+                >
+                {% if form.image.errors %}
+                    <p class="text-warning text-xs italic">{{ form.image.errors }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <label class="block text-text text-sm font-bold mb-2" for="{{ form.ingredients.id_for_label }}">
+                    Ingredients
+                </label>
+
+                <div id="ingredientContainer">
+                    {% for ingredient in form.ingredients %}
+
+                    {% endfor %}
+                    {{ form.ingredients.data|json_script:"hello-data" }}
+                    <script>
+                        let counter = 0;
+
+                        function addIngredient(name, quantity) {
+                            let ingredientContainer = document.getElementById("ingredientContainer");
+                            let row = document.createElement("div");
+                            row.classList.add("flex", "flex-row", "mb-2");
+                            row.innerHTML = ```
+                            <input type="text" name="ingredient_quantity_${counter}"
+                                   id="ingredient_quantity_${counter}" value="${quantity}"
+                                   class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+                                   placeholder="Quantity">
+                            <input type="text" name="ingredient_name_${counter}"
+                                   id="ingredient_quantity_${counter}" value="${name}"
+                                   class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+                                   placeholder="Ingredient">```;
+                            counter++;
+                        }
+
+                        var ingredients = JSON.parse(document.getElementById('ingredients-data').textContent);
+                        for (let ingredient of ingredients) {
+                            addIngredient(ingredient.name, ingredient.quantity);
+                        }
+                    </script>
+                </div>
+                {% if form.ingredients.errors %}
+                    <p class="text-warning text-xs italic">{{ form.ingredients.errors }}</p>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <label class="block text-text text-sm font-bold mb-2" for="{{ form.steps.id_for_label }}">
+                    Steps
+                </label>
+                {{ form.steps }}
+                {% if form.steps.errors %}
+                    <p class="text-warning text-xs italic">{{ form.steps.errors }}</p>
+                {% endif %}
+            </div>
+            <button class="bg-primary hover:bg-text text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="submit">
+                Save
+            </button>
+            {{ form.as_p }}
+        </form>
+    </div>
+{% endblock %}
