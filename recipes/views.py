@@ -2,21 +2,36 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
 from recipes.models import RecipeBook, Recipe, RecipeBookAccess
-from recipes.serializers import RecipeBookSerializer, RecipeSerializer, RecipeListSerializer
+from recipes.serializers import RecipeBookSerializer, RecipeSerializer, RecipeListSerializer, RecipeBookListSerializer
 
 
 class RecipeBookViewSet(viewsets.ModelViewSet):
     queryset = RecipeBook.objects.all()
     serializer_class = RecipeBookSerializer
     permission_classes = [permissions.IsAuthenticated]
-    list_serializer_class = RecipeBookSerializer
+    list_serializer_class = RecipeBookListSerializer
 
     def get_queryset(self):
         queryset = RecipeBook.objects.all()
-        if self.request.user.is_superuser:
-            return queryset
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(users__in=[self.request.user])
+        # prefetch users on detail view
+        if self.action == 'retrieve':
+            queryset = queryset.prefetch_related('users')
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return self.list_serializer_class
+        return self.serializer_class
+
+    def retrieve(self, request, *args, **kwargs):
+        # only allow retrieve for own user or admin
+        if request.user.is_superuser or RecipeBook.objects.get(id=kwargs['pk']).users.filter(
+                id=request.user.id).exists():
+            return super().retrieve(request, *args, **kwargs)
         else:
-            return queryset.filter(users__in=[self.request.user])
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
     def create(self, request, *args, **kwargs):
         print(request.data)
