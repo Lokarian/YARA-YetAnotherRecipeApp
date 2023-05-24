@@ -3,26 +3,25 @@
     <h1 class="text-2xl font-bold text-text ">Yet Another Recipe App</h1>
   </div>
   <div>
-    <form method="post" class="bg-card shadow-md rounded-3xl px-8 pt-6 pb-8 mb-4">
+    <form [formGroup]="form" (submit)="login()" class="bg-card shadow-md rounded-3xl px-8 pt-6 pb-8 mb-4">
       <div class="mb-4">
         <label class="block text-text text-sm font-bold mb-2" for="username">
           Username
         </label>
-        <input type="text" name="username" id="username"
+        <input type="text" formControlName="username" id="username"
                class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
                placeholder="Username">
-        <p class="text-warning text-xs italic">Error</p>
+        <p class="text-warning text-xs italic" *ngIf="form.controls.username.invalid&&form.touched">Cannot be empty</p>
       </div>
 
       <div class="mb-6">
         <label class="block text-text text-sm font-bold mb-2" for="password">
           Password
         </label>
-        <input type="password" name="password" id="password"
-               class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight mb-3"
-               placeholder="***********">
-
-        <p class="text-warning text-xs italic">Error</p>
+        <input type="password" formControlName="password" id="password"
+               class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+               placeholder="******************">
+        <p class="text-warning text-xs italic" *ngIf="form.controls.password.invalid&&form.touched">Cannot be empty</p>
       </div>
       <div class="flex items-center justify-around">
         <button
@@ -30,7 +29,7 @@
           type="submit">
           Log In
         </button>
-        <a class="inline-block align-baseline font-bold text-sm text-text hover:text-primary" href="/register">
+        <a class="inline-block align-baseline font-bold text-sm text-text hover:text-primary" routerLink="/register" queryParamsHandling="preserve">
           Register
         </a>
       </div>

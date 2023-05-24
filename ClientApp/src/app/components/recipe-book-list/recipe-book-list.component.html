@@ -1,0 +1,51 @@
+<div class="flex flex-col gap-2">
+  <ng-container *ngIf="books$|async as books">
+    <h1 class="text-2xl text-text font-bold mb-2 mx-auto">My Recipe Books</h1>
+    <ng-container *ngIf="books.length>0 else noBooks">
+      <a *ngFor="let recipeBook of books" routerLink="/recipeBook/{{ recipeBook.id }}"
+         class="bg-card h-40 p-8 shadow-md rounded-xl overflow-hidden flex flex-row">
+        <div class="pl-4 flex flex-col flex-1 max-w-full">
+          <h1 class="text-xl text-text  font-bold mb-2">{{ recipeBook.title }}</h1>
+          <p class="flex-1 text-primary text-base overflow-auto">{{ recipeBook.description }}</p>
+          <p class="truncate text-text">
+            Users:
+            <ng-container *ngFor="let user of recipeBook.users;let last=last">
+              <span *ngIf="user.access_level=='Full'" class="text-text">
+                {{ user.username }}
+              </span>
+              <span *ngIf="user.access_level=='Read'" class="text-gray-400">
+                {{ user.username }}
+              </span>
+            </ng-container>
+          </p>
+        </div>
+        <div *ngIf="recipeBook.editable" class="flex flex-col justify-center">
+          <a routerLink="/recipeBook/{{ recipeBook.id }}/edit">
+            <svg class="w-6 h-6 mb-1 fill-primary hover:text-text"
+                 xmlns="http://www.w3.org/2000/svg" viewBox="0 96 960 960">
+              <path
+                d="M180 876h44l443-443-44-44-443 443v44Zm614-486L666 262l42-42q17-17 42-17t42 17l44 44q17 17 17 42t-17 42l-42 42Zm-42 42L248 936H120V808l504-504 128 128Zm-107-21-22-22 44 44-22-22Z"/>
+            </svg>
+          </a>
+        </div>
+      </a>
+    </ng-container>
+    <ng-template #noBooks>
+      <h1>
+        Quite empty here, add a new Recipe Book or ask your friends to share theirs with you!
+      </h1>
+    </ng-template>
+    <div class="flex flex-row justify-center">
+      <a data-tooltip-target="tooltip-new" type="button" routerLink="/recipeBook/new"
+              class="inline-flex items-center justify-center w-8 h-8 font-medium bg-primary rounded-xl hover:bg-text group focus:ring-4 focus:ring-blue-300 focus:outline-none ">
+        <svg class="w-6 h-6 text-card" fill="currentColor" viewBox="0 0 20 20"
+             xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path clip-rule="evenodd" fill-rule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"></path>
+        </svg>
+        <span class="sr-only">New item</span>
+      </a>
+    </div>
+  </ng-container>
+
+</div>

@@ -11,18 +11,33 @@ export class LocalstoreService {
 
   public set(key: string, value: any) {
     localStorage.setItem(key, JSON.stringify(value));
+    window.dispatchEvent(new StorageEvent("storage", {
+      key,
+      newValue: JSON.stringify(value),
+      storageArea: localStorage
+    }));
+
   }
 
   public get<T>(key: string): T | null {
     const value = localStorage.getItem(key);
-    if (value) {
-      return JSON.parse(value);
+    if (value !== null) {
+      try {
+        return JSON.parse(value) as T;
+      } catch (e) {
+        return value as unknown as T;
+      }
     }
     return null;
   }
 
   public remove(key: string) {
     localStorage.removeItem(key);
+    window.dispatchEvent(new StorageEvent("storage", {
+      key,
+      newValue: null,
+      storageArea: localStorage
+    }));
   }
 
   /**

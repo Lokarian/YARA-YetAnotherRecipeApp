@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {RequestService} from "./request.service";
 import {LocalstoreService} from "./localstore.service";
 import {Router} from "@angular/router";
+import {Observable, tap} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +14,21 @@ export class AuthService {
   }
 
 
-  public async login(username: string, password: string): Promise<boolean> {
-    try {
-      const token = this.requestService.post("login", {username, password});
-      this.localStore.set("token", token);
-      return true;
-    } catch (e) {
-      return false;
-    }
+  public login(username: string, password: string): Observable<boolean> {
+    return this.requestService.post("login", {username, password}).pipe(tap((response: any) => {
+      this.localStore.set("token", response.token);
+    }));
+  }
+
+  public register(username: string, email: string, password: string): Observable<boolean> {
+    return this.requestService.post("register", {
+      username,
+      email,
+      password1: password,
+      password2: password
+    }).pipe(tap((response: any) => {
+      this.localStore.set("token", response.token);
+    }));
   }
 
   public async logout(): Promise<void> {
@@ -33,10 +41,12 @@ export class AuthService {
 
   private handleTokenChange() {
     this.localStore.asObservable("token").subscribe((token) => {
-      if (token) {
-        this.router.navigate([""]);
-      } else {
-        this.router.navigate(["login"]);
+      if (!token) {
+        //add current url to redirect to after login if the current url is not login
+        if (this.router.url !== "/login" && this.router.url !== "/register") {
+          this.localStore.set("redirectUrl", this.router.url);
+        }
+        this.router.navigate(["/login"]);
       }
     });
   }

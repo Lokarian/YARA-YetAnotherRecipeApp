@@ -1,0 +1,140 @@
+<div class="container mx-auto px-4 pt-6">
+  <h1 class="text-3xl text-center font-bold mb-6">Create New Recipe</h1>
+  <div></div>
+  <form [formGroup]="form" (submit)="submit()" class="bg-card shadow-md rounded-3xl px-8 pt-6 pb-8">
+    <div class="mb-4">
+      <label class="block text-text text-sm font-bold mb-2" for="title">
+        Name
+      </label>
+      <input type="text" formControlName="title" id="title"
+             class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+             placeholder="Name of the recipe">
+      <p class="text-warning text-xs italic" *ngIf="form.controls.title.invalid&&form.controls.title.touched">
+        Title is required
+      </p>
+    </div>
+    <div class="mb-4">
+      <label class="block text-text text-sm font-bold mb-2" for="description">
+        Description
+      </label>
+      <textarea type="text" formControlName="description" id="description"
+                class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+                placeholder="Description of the recipe"></textarea>
+    </div>
+    <img *ngIf="getImageLink() as imageUrl" [src]="imageUrl"
+         class="mx-auto max-w-md max-h-md aspect-square object-fill">
+    <div class="mb-4">
+      <label class="block text-text text-sm font-bold mb-2" for="file_input">Image</label>
+      <div (click)="imageInput.click()"
+           class="bg-white shadow appearance-none text-text placeholder-primary border-primary ring-primary
+        focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight">
+        <span *ngIf="imageInput.files?.length" class="text-text">{{imageInput.files?.[0]?.name ?? "Error"}}</span>
+        <span *ngIf="!imageInput.files?.length" class="text-text">Click to upload an image</span>
+        <input #imageInput class="w-0" id="file_input" type="file" accept="image/*" (change)="onImageChange($event)">
+      </div>
+      <p class="text-warning text-xs italic" *ngIf="form.controls.image.invalid&&form.controls.image.touched">
+        Image is required
+      </p>
+    </div>
+    <div class="mb-4">
+      <label class="block text-text text-sm font-bold mb-2">
+        Ingredients
+      </label>
+
+      <div id="ingredientContainer">
+        <form [formGroup]="ingredient" class="flex flex-row mb-2 gap-2"
+              *ngFor="let ingredient of form.controls.ingredients.controls;index as i">
+          <div class="basis-2/12">
+            <input type="text" formControlName="amount"
+                   class=" shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+                   placeholder="Quantity">
+            <p class="text-warning text-xs italic"
+               *ngIf="ingredient.controls['amount'].invalid&&ingredient.controls['amount'].touched">
+              Quantity is required
+            </p>
+          </div>
+          <div class="flex-1">
+            <input type="text" formControlName="name"
+                   class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+                   placeholder="Ingredient">
+            <p class="text-warning text-xs italic"
+               *ngIf="ingredient.controls['name'].invalid&&ingredient.controls['name'].touched">
+              Ingredient is required
+            </p>
+          </div>
+          <!--remove button with 1/12-->
+          <button type="button" class="btn btn-primary btn-sm" (click)="removeIngredient(i)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 96 960 960" fill="currentColor"
+                 class="w-6 h-6 mb-1 text-primary group-hover:text-text">
+              <path
+                d="M261 936q-24.75 0-42.375-17.625T201 876V306h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438V306ZM367 790h60V391h-60v399Zm166 0h60V391h-60v399ZM261 306v570-570Z"/>
+            </svg>
+          </button>
+        </form>
+        <div class="flex flex-row justify-end">
+          <button type="button" class="btn btn-primary btn-sm" (click)="createIngredient()">
+
+            <svg class="w-6 h-6 mb-1 text-primary group-hover:text-text " fill="currentColor" viewBox="0 0 20 20"
+                 xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path clip-rule="evenodd" fill-rule="evenodd"
+                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-text text-sm font-bold mb-2">
+        Steps
+      </label>
+      <div id="stepContainer">
+        <form [formGroup]="step" class="flex flex-row mb-2 gap-2 items-center"
+              *ngFor="let step of form.controls.steps.controls;index as i"
+              [draggable]="true" (dragstart)="onDragStart(i)"
+              (dragenter)="onDragEnter(i)"
+              (dragend)="onDragEnd()">
+          <div class="text-text">{{i + 1}}.</div>
+          <div class="flex-1">
+            <textarea formControlName="description"
+                      class="flex-1 shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+                      placeholder="Description"></textarea>
+            <p class="text-warning text-xs italic"
+               *ngIf="step.controls['description'].invalid&&step.controls['description'].touched">
+              Description is required
+            </p>
+          </div>
+          <!--remove button with 1/12-->
+          <button type="button" class="btn btn-primary btn-sm" (click)="removeStep(i)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 96 960 960" fill="currentColor"
+                 class="w-6 h-6 mb-1 text-primary group-hover:text-text">
+              <path
+                d="M261 936q-24.75 0-42.375-17.625T201 876V306h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438V306ZM367 790h60V391h-60v399Zm166 0h60V391h-60v399ZM261 306v570-570Z"/>
+            </svg>
+          </button>
+        </form>
+        <div class="flex flex-row justify-end">
+          <button type="button" class="btn btn-primary btn-sm" (click)="createStep()">
+
+            <svg class="w-6 h-6 mb-1 text-primary group-hover:text-text " fill="currentColor" viewBox="0 0 20 20"
+                 xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path clip-rule="evenodd" fill-rule="evenodd"
+                    d="M10 3a1 1 0 011 1v5h5 a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"></path>
+            </svg>
+          </button>
+
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-row justify-end">
+      <button
+        class="bg-primary hover:bg-text text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        type="submit">
+        Save
+      </button>
+    </div>
+  </form>
+</div>
+<dialog #recipeBookDialog>
+
+</dialog>

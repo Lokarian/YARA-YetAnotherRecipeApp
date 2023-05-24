@@ -1,4 +1,7 @@
+import json
+
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from recipes.models import Recipe, RecipeBook, RecipeBookAccess
@@ -25,34 +28,42 @@ class RecipeBookUserSerializer(serializers.RelatedField):
             'access_level': value.access_level,
         }
 
-    def to_internal_value(self, data):
-        user = User.objects.get(username=data['username'])
-        access_level = data['access_level']
-        return RecipeBookAccess(user=user, access_level=access_level)
-
 
 class RecipeBookSerializer(serializers.ModelSerializer):
-    users = RecipeBookUserSerializer(many=True)
+    users = serializers.SerializerMethodField()
 
     class Meta:
         model = RecipeBook
-        fields = ('title', 'description', 'users')
+        fields = ('id', 'title', 'description', 'users')
 
-    def update(self, instance, validated_data):
-        users_data = validated_data.pop('users', None)
-        if users_data is not None:
-            instance.recipebookaccess_set.all().delete()
-            for user_data in users_data:
-                access = RecipeBookAccess(
-                    recipebook=instance,
-                    user=User.objects.get(username=user_data['username']),
-                    access_level=user_data['access_level'],
-                )
-                access.save()
-        return super().update(instance, validated_data)
+    def get_users(self, obj):
+        recipe_book_accesses = obj.recipebookaccess_set.all()
+        users_data = []
+        for access in recipe_book_accesses:
+            user_data = {
+                'username': access.user.username,
+                'access_level': access.get_access_level_display(),
+                'user_id': access.user.id,
+            }
+            users_data.append(user_data)
+        return users_data
 
 
 class RecipeBookListSerializer(serializers.ModelSerializer):
+    users = serializers.SerializerMethodField()
+
     class Meta:
         model = RecipeBook
-        fields = ('id', 'title', 'description')
+        fields = ('id', 'title', 'description', 'users')
+
+    def get_users(self, obj):
+        recipe_book_accesses = obj.recipebookaccess_set.all()
+        users_data = []
+        for access in recipe_book_accesses:
+            user_data = {
+                'username': access.user.username,
+                'access_level': access.get_access_level_display(),
+                'user_id': access.user.id,
+            }
+            users_data.append(user_data)
+        return users_data

@@ -2,47 +2,62 @@
   <div class="flex flex-col items-center justify-center mb-20 ">
     <h1 class="text-2xl font-bold text-text ">Yet Another Recipe App</h1>
   </div>
-  <form method="post" class="bg-card w-full max-w-2xl shadow-md rounded-3xl px-8 pt-6 pb-8 mb-4">
-    <div class="mb-4">
-      <label class="block text-text text-sm font-bold mb-2" for="email">
-        email
-      </label>
-      <input type="email" name="email"
-             id="email"
-             class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
-             placeholder="email">
-      <p class="text-warning text-xs italic">Error</p>
+  <form [formGroup]="registerForm" class="bg-card w-full max-w-2xl shadow-md rounded-3xl px-8 pt-6 pb-8 mb-4">
+    <div class="relative w-full mb-3">
+      <label
+        class="block text-text text-sm font-bold mb-2"
+        for="userName"
+      >Username</label
+      ><input
+      type="text"
+      class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight mb-3"
+      placeholder="Username"
+      id="userName"
+      formControlName="userName"
+      style="transition: all 0.15s ease 0s;"
+    />
     </div>
-    <div class="mb-4">
-      <label class="block text-text text-sm font-bold mb-2" for="username">
-        Username
-      </label>
-      <input type="text" name="username"
-             id="username"
-             class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
-             placeholder="Username">
-      <p class="text-warning text-xs italic">Error</p>
+    <div class="relative w-full mb-3">
+      <label
+        class="block text-text text-sm font-bold mb-2"
+        for="email"
+      >Email</label
+      ><input
+      type="email"
+      class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight mb-3"
+      placeholder="Email"
+      id="email"
+      formControlName="email"
+      style="transition: all 0.15s ease 0s;"
+    />
     </div>
-
-    <div class="mb-6">
-      <label class="block text-text text-sm font-bold mb-2" for="password1">
-        Password
-      </label>
-      <input type="password" name="password1"
-             id="password1"
-             class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight mb-3"
-             placeholder="***********">
-      <p class="text-warning text-xs italic">Error</p>
+    <div class="relative w-full mb-3">
+      <label
+        class="block text-text text-sm font-bold mb-2"
+        for="password"
+      >Password</label
+      ><input
+      type="password"
+      id="password"
+      class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight mb-3"
+      placeholder="Password"
+      formControlName="password"
+      style="transition: all 0.15s ease 0s;"
+    />
     </div>
-    <div class="mb-6">
-      <label class="block text-text text-sm font-bold mb-2" for="password1">
-        Password
-      </label>
-      <input type="password" name="password2"
-             id="password2"
-             class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight mb-3"
-             placeholder="***********">
-      <p class="text-warning text-xs italic">Error</p>
+    <div class="relative w-full mb-3">
+      <label
+        class="block text-text text-sm font-bold mb-2"
+        for="confirmPassword"
+      >Repeat Password</label
+      ><input
+      type="password"
+      id="confirmPassword"
+      class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight mb-3"
+      placeholder="Password"
+      formControlName="confirmPassword"
+      style="transition: all 0.15s ease 0s;"
+    />
     </div>
     <div class="flex items-center justify-around">
       <button
@@ -55,6 +70,7 @@
       </a>
     </div>
   </form>
+
   <p class="text-center text-gray-500 text-xs">
     &copy;2023 Samuel Reithmeir. All rights reserved.
   </p>

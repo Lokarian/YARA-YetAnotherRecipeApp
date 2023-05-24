@@ -1,1 +1,14 @@
-<p>recipe-list works!</p>
+<div class="container mx-auto px-4 py-6">
+  <h1 class="text-3xl text-center font-bold mb-6">Recipe List</h1>
+  <div class="">
+    <a *ngFor="let recipe of recipes$|async" routerLink="/recipe/{{ recipe.id }}"
+      class="bg-card h-40 p-8 shadow-md rounded-xl overflow-hidden flex flex-row">
+      <img class="h-full aspect-[1/1] rounded-2xl object-cover object-center" [src]="sanitizeImageUrl(recipe.image)"
+           alt="{{ recipe.title }}">
+      <div class="pl-4 flex flex-col">
+        <h1 class="text-xl text-text  font-bold mb-2">{{ recipe.title }}</h1>
+        <p class="flex-1 text-primary text-base overflow-auto">{{ recipe.description }}</p>
+      </div>
+    </a>
+  </div>
+</div>

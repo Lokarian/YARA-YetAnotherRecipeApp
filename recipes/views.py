@@ -1,5 +1,8 @@
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
+from rest_framework.utils import json
 
 from recipes.models import RecipeBook, Recipe, RecipeBookAccess
 from recipes.serializers import RecipeBookSerializer, RecipeSerializer, RecipeListSerializer, RecipeBookListSerializer
@@ -33,17 +36,50 @@ class RecipeBookViewSet(viewsets.ModelViewSet):
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
+    def list(self, request, *args, **kwargs):
+        # Only allow list for own user or admin
+        if request.user.is_superuser:
+            return super().list(request, *args, **kwargs)
+
+        # Get the user's recipe book accesses
+        recipe_book_accesses = RecipeBookAccess.objects.filter(user=request.user)
+
+        # Get the recipe book IDs for the user's accesses
+        recipe_book_ids = recipe_book_accesses.values_list('recipebook_id', flat=True)
+
+        # Filter the RecipeBook queryset based on the user's access
+        queryset = RecipeBook.objects.filter(id__in=recipe_book_ids)
+
+        serializer = self.list_serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
     def create(self, request, *args, **kwargs):
-        print(request.data)
-        model = super().create(request, *args, **kwargs)
-        return model
+        users = json.loads(request.data['users'])
+        recipe_book = RecipeBook(title=request.data['title'], description=request.data['description'])
+        recipe_book.save()
+        # add the users to the recipebook
+        for user in users:
+            user_obj = User.objects.get(username=user['username'])
+            access_level = user['access_level']
+            RecipeBookAccess.objects.create(user=user_obj, recipebook=recipe_book, access_level=access_level)
+        # return with data serialized by serializer_class
+        return Response(status=status.HTTP_201_CREATED, data=self.serializer_class(recipe_book).data)
 
     def update(self, request, *args, **kwargs):
         # check for write access
-        book_access = RecipeBookAccess.objects.get(user=request.user, recipe_book=kwargs['pk'])
+        book_access = RecipeBookAccess.objects.get(user=request.user, recipebook=kwargs['pk'])
         # if superuser or write access
-        if request.user.is_superuser or book_access.access_level == 'W':
-            return super().update(request, *args, **kwargs)
+        if request.user.is_superuser or book_access.access_level == 'Full':
+            super().update(request, *args, **kwargs)
+            # remove all current accesses and add the new ones
+            recipe_book = RecipeBook.objects.get(id=kwargs['pk'])
+            recipe_book.users.clear()
+            users = json.loads(request.data['users'])
+            for user in users:
+                user_obj = User.objects.get(username=user['username'])
+                access_level = user['access_level']
+                RecipeBookAccess.objects.create(user=user_obj, recipebook=recipe_book, access_level=access_level)
+            return Response(status=status.HTTP_200_OK, data=self.serializer_class(recipe_book).data)
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
 

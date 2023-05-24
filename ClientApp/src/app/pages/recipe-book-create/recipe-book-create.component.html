@@ -1,0 +1,106 @@
+<div class="container mx-auto px-4 pt-6">
+  <h1 class="text-3xl text-center font-bold mb-6">Create New Recipe Book</h1>
+  <form [formGroup]="form" (submit)="submit()" class="bg-card shadow-md rounded-3xl px-8 pt-6 pb-8">
+    <div class="mb-4">
+      <label class="block text-text text-sm font-bold mb-2" for="title">
+        Name
+      </label>
+      <input type="text" formControlName="title" id="title"
+             class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+             placeholder="Name of the recipe book">
+      <p class="text-warning text-xs italic" *ngIf="form.controls.title.invalid&&form.controls.title.touched">
+        Title is required
+      </p>
+    </div>
+    <div class="mb-4">
+      <label class="block text-text text-sm font-bold mb-2" for="description">
+        Description
+      </label>
+      <textarea type="text" formControlName="description" id="description"
+                class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+                placeholder="Optional description"></textarea>
+      <p class="text-warning text-xs italic"
+         *ngIf="form.controls.description.invalid&&form.controls.description.touched">
+        Description is required
+      </p>
+    </div>
+    <div class="mb-4">
+      <label class="block text-text text-sm font-bold mb-2" for="test">
+        Users
+      </label>
+      <ul *ngIf="form.controls.users.controls.length" class=" text-text bg-card border border-primary rounded-lg mb-4">
+        <li *ngFor="let user of form.controls.users.controls;let i=index"
+            class="w-full group gap-4 p-2 cursor-pointer last:border-b-0 border-b first:rounded-t-lg last:rounded-b-lg border-primary">
+          <form [formGroup]="user" class="flex flex-row items-stretch">
+            <h2 class="text-text flex-1 truncate">{{user.value.username}}</h2>
+            <select formControlName="access_level" class=" bg-transparent text-primary border-none focus:outline-none">
+              <option value="Read">Read</option>
+              <option value="Full">Read/Write</option>
+            </select>
+
+            <button type="button" class="btn btn-primary btn-sm" (click)="removeUser(i)" [class.invisible]="isOwnUser(user.value.username)">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1 text-primary group-hover:text-text" fill="currentColor"
+                   viewBox="0 -960 960 960" width="48">
+                <path d="M200-450v-60h560v60H200Z"/>
+              </svg>
+            </button>
+
+          </form>
+        </li>
+      </ul>
+      <div class="bg-background shadow-md rounded-xl p-2">
+        <input #searchBar type="text"
+               class="bg-white rounded-md w-full px-2 flex-1 py-2 text-text bg-transparent border-none focus:outline-none"
+               placeholder="Search" [value]="searchTextSubject.value||''"
+               (keyup)="searchTextSubject.next(searchBar.value)">
+
+        <div id="test" *ngIf="searchedUsers$|async as users">
+          <div class="flex flex-row justify-center mb-2">
+            <button class="mx-auto text-white" *ngIf="users.previous"
+                    (click)="pageNumber=pageNumber-1;searchForUsers()">
+              <svg aria-hidden="true" class="w-5 h-5 text-primary" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M5 15l7-7 7 7"></path>
+              </svg>
+            </button>
+          </div>
+          <ul class=" text-text bg-card border border-primary rounded-lg">
+            <ng-container *ngFor="let user of users.results;let i=index">
+              <li *ngIf="showUser(user)"
+                  (click)="selectUser(user)"
+                  class="w-full group flex flex-row items-center justify-between gap-2 p-2 cursor-pointer last:border-b-0 border-b first:rounded-t-lg last:rounded-b-lg border-primary hover:bg-primary">
+                <h2 class="text-text truncate">{{user.username}}</h2>
+                <button type="button" class="">
+                  <svg class="w-6 h-6 text-primary group-hover:text-text " fill="currentColor" viewBox="0 0 20 20"
+                       xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path clip-rule="evenodd" fill-rule="evenodd"
+                          d="M10 3a1 1 0 011 1v5h5 a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"></path>
+                  </svg>
+                </button>
+              </li>
+            </ng-container>
+
+          </ul>
+          <div class="flex flex-row justify-center">
+            <button class="text-white" *ngIf="users.next" (click)="pageNumber=pageNumber+1;searchForUsers()">
+              <svg aria-hidden="true" class="w-5 h-5 text-primary" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-row justify-end">
+      <button
+        class="bg-primary hover:bg-text text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        type="submit">
+        Save
+      </button>
+    </div>
+  </form>
+</div>
