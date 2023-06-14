@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+import logging.config
+from django.utils.log import DEFAULT_LOGGING
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +27,7 @@ SECRET_KEY = 'django-insecure-f!lds9kqgp%(m&o!t7yb#$d+x&t0pbb&vi-1!&=qffol8scjce
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 APPEND_SLASH = False
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.178.143", "127.0.0.1"]
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
@@ -42,7 +45,6 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'rest_framework',
     'rest_framework.authtoken',
-    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -152,3 +154,45 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
+
+
+# Disable Django's logging setup
+LOGGING_CONFIG = None
+
+LOGLEVEL = os.environ.get('LOGLEVEL', 'info').upper()
+
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        'django.server': DEFAULT_LOGGING['formatters']['django.server'],
+    },
+    'handlers': {
+        # console logs to stderr
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+        },
+        'django.server': DEFAULT_LOGGING['handlers']['django.server'],
+    },
+    'loggers': {
+        # default for all undefined Python modules
+        '': {
+            'level': 'WARNING',
+            'handlers': ['console'],
+        },
+        # Our application code
+        'app': {
+            'level': LOGLEVEL,
+            'handlers': ['console'],
+            # Avoid double logging because of root logger
+            'propagate': False,
+        },
+        # Default runserver request logging
+        'django.server': DEFAULT_LOGGING['loggers']['django.server'],
+    },
+})

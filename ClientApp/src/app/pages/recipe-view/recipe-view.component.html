@@ -1,0 +1,24 @@
+<div class="w-full" *ngIf="recipe$|async as recipe">
+  <div class="relative w-fit mx-auto rounded-2xl">
+    <h1
+      class="absolute z-20 bottom-0 h-fit left-0 text-3xl font-bold text-white text-center mb-8">{{ recipe.title }}</h1>
+    <img class=" w-full max-w-xl mx-auto aspect-[1/1] object-cover object-center"
+         [src]="sanitizeImageUrl(recipe.image)"
+         alt="{{ recipe.title }}">
+    <div class="absolute z-10 bottom-0 left-0 w-full h-full bg-gradient-to-t from-black to-transparent"></div>
+  </div>
+  <p class="mt-8 text-lg text-gray-700">{{ recipe.description }}</p>
+  <div class="mt-8">
+    <h2 class="text-2xl font-bold text-gray-800">Ingredients</h2>
+    <ul class="mt-4 list-disc list-inside">
+      <li *ngFor="let ingredient of recipe.ingredients"><span
+        class="font-bold">{{ ingredient.amount }}</span> {{ ingredient.name }}</li>
+    </ul>
+  </div>
+  <div class="mt-8">
+    <h2 class="text-2xl font-bold text-gray-800">Steps</h2>
+    <ol class="mt-4 list-decimal list-inside">
+      <li *ngFor="let step of recipe.steps">{{ step.description }}</li>
+    </ol>
+  </div>
+</div>

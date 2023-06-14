@@ -15,17 +15,16 @@ export class AuthService {
 
 
   public login(username: string, password: string): Observable<boolean> {
-    return this.requestService.post("login", {username, password}).pipe(tap((response: any) => {
+    return this.requestService.post("login/", {username, password}).pipe(tap((response: any) => {
       this.localStore.set("token", response.token);
     }));
   }
 
   public register(username: string, email: string, password: string): Observable<boolean> {
-    return this.requestService.post("register", {
+    return this.requestService.post("register/", {
       username,
       email,
-      password1: password,
-      password2: password
+      password: password,
     }).pipe(tap((response: any) => {
       this.localStore.set("token", response.token);
     }));

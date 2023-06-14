@@ -8,6 +8,7 @@ import {RecipeListComponent} from "./pages/recipe-list/recipe-list.component";
 import {NavbarWrapperComponent} from "./components/navbar-wrapper/navbar-wrapper.component";
 import {RecipeCreatePage} from "./pages/recipe-create-page/recipe-create-page.component";
 import {RecipeBookCreateComponent} from "./pages/recipe-book-create/recipe-book-create.component";
+import {RecipeViewComponent} from "./pages/recipe-view/recipe-view.component";
 
 const routes: Routes = [
   {path: "login", component: LoginComponent, pathMatch: "full"},
@@ -22,6 +23,7 @@ const routes: Routes = [
       {path: "list", component: RecipeListComponent, pathMatch: "full"},
       {path: "create", component: RecipeCreatePage, pathMatch: "full"},
       {path: "edit/:id", component: RecipeCreatePage, pathMatch: "full"},
+      {path: "recipe/:id", component: RecipeViewComponent, pathMatch: "full"},
       {path: "recipeBook/new", component: RecipeBookCreateComponent, pathMatch: "full"},
       {path: "recipeBook/:id/edit", component: RecipeBookCreateComponent, pathMatch: "full"},
       {path: "recipeBook/:id", component: RecipeListComponent, pathMatch: "full"},

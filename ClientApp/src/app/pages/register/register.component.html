@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center mb-20 ">
     <h1 class="text-2xl font-bold text-text ">Yet Another Recipe App</h1>
   </div>
-  <form [formGroup]="registerForm" class="bg-card w-full max-w-2xl shadow-md rounded-3xl px-8 pt-6 pb-8 mb-4">
+  <form [formGroup]="registerForm" (submit)="register()" class="bg-card w-full max-w-2xl shadow-md rounded-3xl px-8 pt-6 pb-8 mb-4">
     <div class="relative w-full mb-3">
       <label
         class="block text-text text-sm font-bold mb-2"

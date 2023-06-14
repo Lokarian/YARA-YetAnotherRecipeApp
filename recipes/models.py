@@ -15,8 +15,6 @@ class Recipe(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     image = models.ImageField(upload_to=filename_with_uuid, null=True, blank=True)
-    ingredients = models.ManyToManyField('Ingredient')
-    steps = models.ManyToManyField('RecipeStep')
     # each recipe has to be in one recipe book
     recipe_book = models.ForeignKey('RecipeBook', on_delete=models.CASCADE)
 
@@ -25,6 +23,8 @@ class Recipe(models.Model):
 
 
 class Ingredient(models.Model):
+    recipe = models.ForeignKey(Recipe, related_name='ingredients', on_delete=models.CASCADE)
+
     name = models.CharField(max_length=200)
     amount = models.CharField(max_length=200)
 
@@ -33,8 +33,10 @@ class Ingredient(models.Model):
 
 
 class RecipeStep(models.Model):
-    description = models.TextField()
+    recipe = models.ForeignKey(Recipe, related_name='steps', on_delete=models.CASCADE)
 
+    description = models.TextField()
+    step_number = models.IntegerField()
     # image = models.ImageField(upload_to='images/recipe_steps/')
 
     def __str__(self):

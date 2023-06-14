@@ -18,6 +18,10 @@ export class RequestService {
     return this.http.get<T>(this.backendUrl + url, {params});
   }
 
+  public getBlob(url: string, params?: any): Observable<Blob> {
+    return this.http.get(this.backendUrl + url, {params, responseType: "blob"});
+  }
+
   public post<T>(url: string, body: any): Observable<T> {
     return this.http.post<T>(this.backendUrl + url, body);
   }

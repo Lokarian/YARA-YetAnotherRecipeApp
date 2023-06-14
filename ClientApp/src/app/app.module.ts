@@ -16,6 +16,8 @@ import { RecipeCreatePage } from './pages/recipe-create-page/recipe-create-page.
 import {AuthInterceptor} from "./services/auth.interceptor";
 import { RecipeBookListComponent } from './components/recipe-book-list/recipe-book-list.component';
 import { RecipeBookCreateComponent } from './pages/recipe-book-create/recipe-book-create.component';
+import {InfiniteScrollModule} from "ngx-infinite-scroll";
+import { RecipeViewComponent } from './pages/recipe-view/recipe-view.component';
 
 @NgModule({
   declarations: [
@@ -28,13 +30,15 @@ import { RecipeBookCreateComponent } from './pages/recipe-book-create/recipe-boo
     DashboardComponent,
     RecipeCreatePage,
     RecipeBookListComponent,
-    RecipeBookCreateComponent
+    RecipeBookCreateComponent,
+    RecipeViewComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    InfiniteScrollModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

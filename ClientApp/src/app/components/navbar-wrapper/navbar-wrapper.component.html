@@ -1,10 +1,12 @@
-<div class="fixed z-50 w-11/12 py-6 max-w-lg -translate-x-1/2 bg-card border border-gray-200 rounded-3xl bottom-4 left-1/2">
+<div
+  class="fixed z-50 w-11/12 py-6 max-w-lg -translate-x-1/2 bg-card border border-gray-200 rounded-3xl bottom-4 left-1/2">
   <div class="grid h-full max-w-lg grid-cols-5 mx-auto">
     <a data-tooltip-target="tooltip-home" type="button" routerLink="/"
-            class="inline-flex flex-col items-center justify-center px-5 rounded-l-full hover:bg-gray-50 group">
+       class="inline-flex flex-col items-center justify-center px-5 rounded-l-full  group">
       <svg class="w-6 h-6 mb-1 text-primary group-hover:text-text"
            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+        <path
+          d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
       </svg>
       <span class="sr-only">Home</span>
     </a>
@@ -14,10 +16,11 @@
       <div class="tooltip-arrow" data-popper-arrow></div>
     </div>
     <button data-tooltip-target="tooltip-wallet" type="button" (click)="logout()"
-       class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 group">
+            class="inline-flex flex-col items-center justify-center px-5 group">
       <svg class="w-6 h-6 mb-1 text-primary group-hover:text-text "
            fill="currentColor" viewBox="0 96 960 960" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M178.391 953.348q-34.372 0-59.055-24.836-24.684-24.837-24.684-58.338V281.826q0-33.734 24.684-58.737 24.683-25.002 59.055-25.002h295.696v83.739H178.391v588.348h295.696v83.174H178.391Zm488.305-176.13-60.783-58.653 100.913-100.913H367.043v-83.174h337.783L603.913 433.565l60.783-58.783L866.348 577 666.696 777.218Z"></path>
+        <path
+          d="M178.391 953.348q-34.372 0-59.055-24.836-24.684-24.837-24.684-58.338V281.826q0-33.734 24.684-58.737 24.683-25.002 59.055-25.002h295.696v83.739H178.391v588.348h295.696v83.174H178.391Zm488.305-176.13-60.783-58.653 100.913-100.913H367.043v-83.174h337.783L603.913 433.565l60.783-58.783L866.348 577 666.696 777.218Z"></path>
       </svg>
       <span class="sr-only">Logout</span>
     </button>
@@ -42,21 +45,8 @@
       Create new item
       <div class="tooltip-arrow" data-popper-arrow></div>
     </div>
-    <button data-tooltip-target="tooltip-settings" type="button"
-            class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 group">
-      <svg class="w-6 h-6 mb-1 text-primary group-hover:text-text "
-           fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z"></path>
-      </svg>
-      <span class="sr-only">Settings</span>
-    </button>
-    <div id="tooltip-settings" role="tooltip"
-         class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip ">
-      Settings
-      <div class="tooltip-arrow" data-popper-arrow></div>
-    </div>
     <button data-tooltip-target="tooltip-profile" type="button"
-            class="inline-flex flex-col items-center justify-center px-5 rounded-r-full hover:bg-gray-50 group">
+            class="inline-flex flex-col items-center justify-center px-5 rounded-r-full group">
       <svg class="w-6 h-6 mb-1 text-primary group-hover:text-text "
            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path clip-rule="evenodd" fill-rule="evenodd"
@@ -69,13 +59,26 @@
       Profile
       <div class="tooltip-arrow" data-popper-arrow></div>
     </div>
+    <button data-tooltip-target="tooltip-settings" type="button" (click)="history.back()"
+            class="inline-flex flex-col items-center justify-center px-5 group">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1 text-primary group-hover:text-text " viewBox="0 -960 960 960" fill="currentColor">
+        <path d="M480-160 160-480l320-320 42 42-248 248h526v60H274l248 248-42 42Z"/>
+      </svg>
+      <span class="sr-only">Back</span>
+    </button>
+    <div id="tooltip-settings" role="tooltip"
+         class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip ">
+      Back
+      <div class="tooltip-arrow" data-popper-arrow></div>
+    </div>
   </div>
 </div>
-<div class="fixed mx-auto z-49 container bottom-0 left-1/2 -translate-x-1/2 h-40 bg-background" style="background: linear-gradient(180deg, rgba(232,237,219,0) 0%, rgba(232,237,219,1) 20%);">
+<div class="fixed mx-auto max-w-3xl z-20 container bottom-0 left-1/2 -translate-x-1/2 h-40 bg-background"
+     style="background: linear-gradient(180deg, rgba(232,237,219,0) 0%, rgba(232,237,219,1) 20%);">
 
 </div>
 
-<div class="container mx-auto shadow-lg {% block page_padding %} pb-32{% endblock %} min-h-screen">
+<div class="container max-w-3xl mx-auto shadow-lg relative z-10 min-h-screen">
 
   <router-outlet></router-outlet>
   <div class="w-full h-40">

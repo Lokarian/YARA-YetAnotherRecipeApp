@@ -4,10 +4,25 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
-from recipes.models import Recipe, RecipeBook, RecipeBookAccess
+from recipes.models import Recipe, RecipeBook, RecipeBookAccess, Ingredient, RecipeStep
+
+
+class IngredientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'name', 'amount')
+
+
+class StepSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecipeStep
+        fields = ('id', 'description', 'step_number')
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    ingredients = IngredientSerializer(many=True)
+    steps = StepSerializer(many=True)
+
     class Meta:
         model = Recipe
         fields = ('id', 'title', 'description', 'ingredients', 'steps', 'image')

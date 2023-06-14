@@ -1,0 +1,2 @@
+Turn into a JSON array with entries that have the ingredients seperated into name and amount. If no amount can be detected, its an empty string. Not removing shortened units from different languages like "tbsp" or "EL".
+The expected format is: [{"name":"...","amount":"..."},...]

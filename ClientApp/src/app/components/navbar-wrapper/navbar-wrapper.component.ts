@@ -26,4 +26,7 @@ export class NavbarWrapperComponent {
       this.router.navigate(['/create']);
     }
   }
+
+  protected readonly location = location;
+  protected readonly history = history;
 }

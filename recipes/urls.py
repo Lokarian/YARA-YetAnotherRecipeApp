@@ -17,11 +17,14 @@ from rest_framework import routers
 from . import views
 from django.urls import include, path
 
+
 router = routers.DefaultRouter()
 router.register(r'recipeBooks', views.RecipeBookViewSet)
 router.register(r'recipes', views.RecipeViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-
+    path('processUrl/', views.process_url, name='processUrl'),
+    path('imageProxy/', views.image_proxy, name='image-proxy'),
+    path('generateRecipeThumbnail/', views.generate_thumbnails, name='generateRecipeThumbnail'),
 ]

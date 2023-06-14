@@ -9,7 +9,6 @@ import {map, share, switchMap} from "rxjs";
   styleUrls: ['./recipe-book-list.component.css']
 })
 export class RecipeBookListComponent {
-  @Input() writeOnly = false;
   public books$ = this.currentUserService.currentUser$.pipe(
     switchMap(user => {
       if (user) {

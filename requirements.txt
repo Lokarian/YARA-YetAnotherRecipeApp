@@ -5,3 +5,6 @@ django-cleanup
 djangorestframework
 markdown
 django-filter
+django-cors-headers
+recipe-scrapers
+openai

@@ -2,7 +2,7 @@
   <ng-container *ngIf="books$|async as books">
     <h1 class="text-2xl text-text font-bold mb-2 mx-auto">My Recipe Books</h1>
     <ng-container *ngIf="books.length>0 else noBooks">
-      <a *ngFor="let recipeBook of books" routerLink="/recipeBook/{{ recipeBook.id }}"
+      <button *ngFor="let recipeBook of books" routerLink="/recipeBook/{{ recipeBook.id }}"
          class="bg-card h-40 p-8 shadow-md rounded-xl overflow-hidden flex flex-row">
         <div class="pl-4 flex flex-col flex-1 max-w-full">
           <h1 class="text-xl text-text  font-bold mb-2">{{ recipeBook.title }}</h1>
@@ -28,7 +28,7 @@
             </svg>
           </a>
         </div>
-      </a>
+      </button>
     </ng-container>
     <ng-template #noBooks>
       <h1>

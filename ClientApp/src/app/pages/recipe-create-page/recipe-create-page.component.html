@@ -1,6 +1,26 @@
 <div class="container mx-auto px-4 pt-6">
   <h1 class="text-3xl text-center font-bold mb-6">Create New Recipe</h1>
-  <div></div>
+  <div class="bg-card shadow-md rounded-3xl p-4 flex flex-row mb-12 gap-4 items-center">
+    <input type="text" #urlInput (keyup.enter)="importUrl(urlInput.value)"
+           class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
+           placeholder="Import from URL">
+    <button type="button" (click)="importUrl(urlInput.value)" *ngIf="!importLoading">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"
+           class="w-6 h-6 text-primary group-hover:text-text">
+        <path
+          d="M450-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h170v60H280q-58.333 0-99.167 40.765-40.833 40.764-40.833 99Q140-422 180.833-381q40.834 41 99.167 41h170v60ZM324-450v-60h310v60H324Zm556-30h-60q0-58-40.833-99-40.834-41-99.167-41H510v-60h170q83 0 141.5 58.5T880-480ZM699-160v-120H579v-60h120v-120h60v120h120v60H759v120h-60Z"/>
+      </svg>
+    </button>
+    <div role="status" *ngIf="importLoading" class="h-fit">
+      <svg aria-hidden="true" class="w-6 h-6 text-background animate-spin fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+      </svg>
+      <span class="sr-only">Loading...</span>
+    </div>
+
+
+  </div>
   <form [formGroup]="form" (submit)="submit()" class="bg-card shadow-md rounded-3xl px-8 pt-6 pb-8">
     <div class="mb-4">
       <label class="block text-text text-sm font-bold mb-2" for="title">
@@ -17,12 +37,12 @@
       <label class="block text-text text-sm font-bold mb-2" for="description">
         Description
       </label>
-      <textarea type="text" formControlName="description" id="description"
+      <textarea type="text" formControlName="description" id="description" #textareaRef
                 class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
                 placeholder="Description of the recipe"></textarea>
     </div>
     <img *ngIf="getImageLink() as imageUrl" [src]="imageUrl"
-         class="mx-auto max-w-md max-h-md aspect-square object-fill">
+         class="mx-auto max-w-full max-h-md aspect-square object-fill">
     <div class="mb-4">
       <label class="block text-text text-sm font-bold mb-2" for="file_input">Image</label>
       <div (click)="imageInput.click()"
@@ -35,6 +55,20 @@
       <p class="text-warning text-xs italic" *ngIf="form.controls.image.invalid&&form.controls.image.touched">
         Image is required
       </p>
+      <!--full width button with primary color and svg image on the right-->
+      <button type="button" class="w-full flex justify-between items-center bg-primary text-white rounded-md
+      shadow-md focus:outline-none px-4 py-2 mt-2" (click)="generateImages()">
+        <span>Generate Image with AI</span>
+        <svg xmlns="http://www.w3.org/2000/svg" *ngIf="!generateLoading" class="w-6 h-6" fill="currentColor" viewBox="0 -960 960 960"><path d="m772-635-43-100-104-46 104-45 43-95 43 95 104 45-104 46-43 100Zm0 595-43-96-104-45 104-45 43-101 43 101 104 45-104 45-43 96ZM333-194l-92-197-201-90 201-90 92-196 93 196 200 90-200 90-93 197Zm0-148 48-96 98-43-98-43-48-96-47 96-99 43 99 43 47 96Zm0-139Z"/></svg>
+        <div role="status" *ngIf="generateLoading" class="h-fit">
+          <svg aria-hidden="true" class="w-6 h-6 text-background animate-spin fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+          </svg>
+          <span class="sr-only">Loading...</span>
+        </div>
+      </button>
+
     </div>
     <div class="mb-4">
       <label class="block text-text text-sm font-bold mb-2">
@@ -96,7 +130,7 @@
               (dragend)="onDragEnd()">
           <div class="text-text">{{i + 1}}.</div>
           <div class="flex-1">
-            <textarea formControlName="description"
+            <textarea formControlName="description"  #textareaRef
                       class="flex-1 shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight"
                       placeholder="Description"></textarea>
             <p class="text-warning text-xs italic"
@@ -126,6 +160,24 @@
         </div>
       </div>
     </div>
+
+    <div class="mb-4">
+      <label class="block text-text text-sm font-bold mb-2">
+        Recipe Book
+      </label>
+      <select id="countries" formControlName="recipeBookId"
+              class="shadow appearance-none text-text placeholder-primary border-primary ring-primary focus:ring-primary focus:border-primary rounded w-full py-2 px-3 leading-tight">
+        <option [value]="null" selected>Choose a Recipe book</option>
+        <option *ngFor="let recipeBook of recipeBooks" [value]="recipeBook.id">{{recipeBook.title}}</option>
+      </select>
+      <p class="text-warning text-xs italic"
+         *ngIf="form.controls['recipeBookId'].invalid&&form.controls['recipeBookId'].touched">
+        Recipe book is required
+      </p>
+
+
+    </div>
+
     <div class="flex flex-row justify-end">
       <button
         class="bg-primary hover:bg-text text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -135,6 +187,3 @@
     </div>
   </form>
 </div>
-<dialog #recipeBookDialog>
-
-</dialog>

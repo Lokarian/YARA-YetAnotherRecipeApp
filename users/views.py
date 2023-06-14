@@ -1,12 +1,15 @@
+import re
+from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render, redirect
-from rest_framework.decorators import action
+from rest_framework.decorators import action, authentication_classes, api_view, permission_classes
+from rest_framework.generics import CreateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from .forms import NewUserForm
-from django.contrib.auth import login
+from django.contrib.auth import login, get_user_model
 from django.contrib import messages
 from rest_framework import viewsets, status
 from rest_framework import permissions
@@ -15,17 +18,31 @@ from .serializers import *
 
 # Create your views here.
 
+# allow anyone to register
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
 def register_request(request):
-    if request.method == "POST":
-        form = NewUserForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, "Registration successful.")
-            return redirect("/")
-        messages.error(request, "Unsuccessful registration. Invalid information.")
-    form = NewUserForm()
-    return render(request=request, template_name="registration/register.html", context={"register_form": form})
+    email = request.data.get('email')
+    username = request.data.get('username')
+    password = request.data.get('password')
+    # check if valid username and not already in use
+    if username and User.objects.filter(username=username).exists():
+        return Response({'error': 'Username already in use.'}, status=status.HTTP_400_BAD_REQUEST)
+    # check if email regex valid
+    if email and not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        return Response({'error': 'Invalid email address.'}, status=status.HTTP_400_BAD_REQUEST)
+    # check if valid email and not already in use
+    if email and User.objects.filter(email=email).exclude(username=username).exists():
+        return Response({'error': 'Email address already in use.'}, status=status.HTTP_400_BAD_REQUEST)
+    # check if valid password
+    if password and len(password) < 8:
+        return Response({'error': 'Password must be at least 8 characters.'}, status=status.HTTP_400_BAD_REQUEST)
+    #create user
+    user = User.objects.create_user(username=username, email=email, password=password)
+    #create token for user and return it
+    token = Token.objects.create(user=user)
+    return Response({'token': token.key}, status=status.HTTP_201_CREATED)
 
 
 class SmallResultsSetPagination(PageNumberPagination):
