@@ -1,2 +1,1 @@
-# recipe-vault
-A Django based webapp to allow users to import and store their recipes digitally
+# YARA - Yet another recipe app

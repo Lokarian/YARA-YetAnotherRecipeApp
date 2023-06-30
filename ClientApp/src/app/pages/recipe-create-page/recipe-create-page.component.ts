@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {DomSanitizer} from "@angular/platform-browser";
 import {RequestService} from "../../services/request.service";
 import {NotificationService} from "../../services/notification.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-recipe-create-page',
@@ -12,7 +13,7 @@ import {NotificationService} from "../../services/notification.service";
 export class RecipeCreatePage implements OnInit {
 
   public recipeBooks: any[] = [];
-
+  public existingRecipe: any | undefined;
   form = this.createForm();
 
   @ViewChildren('textareaRef') textareas: QueryList<ElementRef<HTMLTextAreaElement>>;
@@ -20,7 +21,12 @@ export class RecipeCreatePage implements OnInit {
   public importLoading = false;
   public generateLoading = false;
 
-  constructor(private fb: FormBuilder, private domSanitizer: DomSanitizer, private requestService: RequestService, private notificationService: NotificationService) {
+  constructor(private fb: FormBuilder,
+              private domSanitizer: DomSanitizer,
+              private requestService: RequestService,
+              private notificationService: NotificationService,
+              private router: Router,
+              private activatedRoute:ActivatedRoute) {
 
   }
 
@@ -28,6 +34,37 @@ export class RecipeCreatePage implements OnInit {
     this.requestService.get<any[]>(`recipeBooks/?write=true`).subscribe(books => {
       this.recipeBooks = books;
     });
+    if(this.activatedRoute.snapshot.params["id"]){
+      this.requestService.get<any>(`recipes/${this.activatedRoute.snapshot.params["id"]}/`).subscribe(recipe=>{
+        this.existingRecipe = recipe;
+        this.form = this.createForm();
+        this.form.patchValue({
+          title: recipe.title,
+          description: recipe.description,
+          recipeBookId: recipe.recipe_book
+        });
+        this.form.controls.ingredients.clear();
+        this.form.controls.steps.clear();
+        recipe.ingredients.forEach((ingredient: any) => {
+          this.form.controls.ingredients.push(this.newIngredient(ingredient));
+        });
+        recipe.steps.forEach((step: any) => {
+          this.form.controls.steps.push(this.newStep({description: step.description}));
+        });
+        //get image from recipe.image as url, create file from it and set it as image
+        this.requestService.getBlobDirect(recipe.image).subscribe((response:any) => {
+          const file = new File([response], "image.png", {type: "image/png"});
+          this.form.controls.image.setValue(file);
+        });
+
+        //resize textareas to fit content
+        setTimeout(() => {
+          this.textareas.forEach((textarea) => {
+            textarea.nativeElement.style.height = textarea.nativeElement.scrollHeight + "px";
+          });
+        }, 0);
+      });
+    }
   }
 
   onImageChange(event: any) {
@@ -41,7 +78,7 @@ export class RecipeCreatePage implements OnInit {
     return this.fb.group({
       title: ['', Validators.required],
       description: [''],
-      image: [null, Validators.required],
+      image: [null as (File|null), Validators.required],
       ingredients: this.fb.array<FormGroup<any>>([this.newIngredient()]),
       steps: this.fb.array<FormGroup<any>>([this.newStep()]),
       recipeBookId: [null, Validators.required]
@@ -110,7 +147,6 @@ export class RecipeCreatePage implements OnInit {
   }
 
   submit() {
-    console.log(this.form.value);
     if (!this.form.valid) {
       this.form.markAllAsTouched();
       return;
@@ -129,9 +165,16 @@ export class RecipeCreatePage implements OnInit {
     formData.append('steps', JSON.stringify(steps!.map((step: any, i) => {
       return {...step, step_number: i}
     })));
-    this.requestService.post("recipes/", formData).subscribe((response) => {
-      console.log(response);
-    });
+    if(this.existingRecipe){
+      this.requestService.put(`recipes/${this.existingRecipe.id}/`, formData).subscribe((response) => {
+        this.router.navigate(["/recipes", this.existingRecipe.id]);
+      });
+    }
+    else{
+      this.requestService.post("recipes/", formData).subscribe((response:any) => {
+        this.router.navigate(["/recipes", response.id]);
+      });
+    }
 
   }
 

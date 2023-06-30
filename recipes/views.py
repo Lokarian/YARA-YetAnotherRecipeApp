@@ -108,27 +108,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = RecipePagination
 
-    def get_queryset(self):
-        queryset = Recipe.objects.all()
-        recipe_book = self.request.query_params.get('recipe_book', None)
-        if recipe_book is not None:
-            queryset = queryset.filter(recipe_book=recipe_book)
-        return queryset
-
     def list(self, request, *args, **kwargs):
-        # Check if the user is a superuser
+        # Check if the user is a superuser, otherwise only return recipes from recipebooks the user has access to
         if request.user.is_superuser:
             queryset = self.queryset
         else:
-            # Filter recipes based on recipe access for the user
             queryset = self.queryset.filter(recipe_book__recipebookaccess__user=request.user)
 
-        # Filter by search text
+        recipe_book_id = request.query_params.get('recipe_book')
+        if recipe_book_id:
+            queryset = queryset.filter(recipe_book=recipe_book_id)
+
         search_text = request.query_params.get('search')
         if search_text:
             queryset = queryset.filter(title__icontains=search_text)
 
-        # Perform pagination
         page = self.paginate_queryset(queryset)
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
@@ -165,6 +159,31 @@ class RecipeViewSet(viewsets.ModelViewSet):
         for ingredient in ingredients:
             Ingredient.objects.create(recipe=recipe, name=ingredient['name'], amount=ingredient['amount'])
         return Response(status=status.HTTP_201_CREATED, data=self.serializer_class(recipe).data)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        instance.steps.all().delete()
+        instance.ingredients.all().delete()
+
+        steps = json.loads(request.data.get('steps', '[]'))
+        for step in steps:
+            RecipeStep.objects.create(recipe=instance, description=step['description'], step_number=step['step_number'])
+
+        ingredients = json.loads(request.data.get('ingredients', '[]'))
+        for ingredient in ingredients:
+            Ingredient.objects.create(recipe=instance, name=ingredient['name'], amount=ingredient['amount'])
+
+        instance.title = request.data.get('title', instance.title)
+        instance.description = request.data.get('description', instance.description)
+        instance.image = request.data.get('image', instance.image)
+        recipeBookId = request.data.get('recipeBookId')
+        if recipeBookId:
+            instance.recipe_book_id = recipeBookId
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 @api_view(['POST'])

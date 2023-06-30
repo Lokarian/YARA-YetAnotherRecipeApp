@@ -14,6 +14,7 @@ import {
 } from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
 import {ActivatedRoute} from "@angular/router";
+import {CurrentUserService} from "../../services/current-user.service";
 
 @Component({
   selector: 'app-recipe-list',
@@ -29,25 +30,28 @@ export class RecipeListComponent implements OnInit {
   }>;
   public pageNumber$: BehaviorSubject<number> = new BehaviorSubject<number>(1);
   public searchTextSubject: BehaviorSubject<string> = new BehaviorSubject<string>("");
-
+  //get recipebook id from url, make backend call to get recipes for that recipebook
+  public recipeBook$: Observable<any> = this.activatedRoute.params.pipe(switchMap((data) => this.requestService.get<any>(`recipeBooks/${data["id"]}/`).pipe(tap(book=>this.evaluateEditable(book)))));
+  public canEdit=false;
   constructor(
     private requestService: RequestService,
     private domSanitizer: DomSanitizer,
+    private currentUserService: CurrentUserService,
     private activatedRoute: ActivatedRoute
   ) {
   }
 
   ngOnInit() {
-    this.recipes$ = combineLatest([this.pageNumber$.asObservable(), this.searchTextSubject.asObservable()]).pipe(
+    this.recipes$ = combineLatest([this.pageNumber$.asObservable(), this.searchTextSubject.asObservable(), this.activatedRoute.params.pipe(map(x => x["id"]))]).pipe(
       debounceTime(300), // Add debounce time to avoid frequent API calls while typing
-      switchMap(([pageNumber, searchText]) => {
+      switchMap(([pageNumber, searchText,recipeBookId]) => {
         return this.requestService
           .get<{
             count: number;
             next: string;
             previous: string;
             results: any[];
-          }>(`recipes/?page=${pageNumber}&search=${searchText}`)
+          }>(`recipes/?recipe_book=${recipeBookId}&page=${pageNumber}&search=${searchText}`)
           .pipe(
             tap((pagination) => {
               if (pagination.results.length === 0 && pageNumber > 1) {
@@ -56,7 +60,7 @@ export class RecipeListComponent implements OnInit {
               }
             })
           );
-      }),share()
+      }), share()
     );
   }
 
@@ -81,5 +85,13 @@ export class RecipeListComponent implements OnInit {
     return this.domSanitizer.bypassSecurityTrustUrl(imageUrl);
   }
 
-  protected readonly event = event;
+  private evaluateEditable(book: any) {
+    this.currentUserService.currentUser$.pipe(first()).subscribe(user => {
+      this.canEdit = (book.users as any[]).some(userAccess => userAccess.user_id === user.id&&userAccess.access_level==="Full");
+    });
+  }
+
+  delete(recipe: any) {
+
+  }
 }

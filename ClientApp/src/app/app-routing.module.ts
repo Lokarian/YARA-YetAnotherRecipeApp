@@ -19,10 +19,8 @@ const routes: Routes = [
     component: NavbarWrapperComponent,
     children: [
       {path: "", component: DashboardComponent, pathMatch: "full"},
-      {path: "list/:id", component: RecipeListComponent, pathMatch: "full"},
-      {path: "list", component: RecipeListComponent, pathMatch: "full"},
       {path: "create", component: RecipeCreatePage, pathMatch: "full"},
-      {path: "edit/:id", component: RecipeCreatePage, pathMatch: "full"},
+      {path: "recipe/:id/edit", component: RecipeCreatePage, pathMatch: "full"},
       {path: "recipe/:id", component: RecipeViewComponent, pathMatch: "full"},
       {path: "recipeBook/new", component: RecipeBookCreateComponent, pathMatch: "full"},
       {path: "recipeBook/:id/edit", component: RecipeBookCreateComponent, pathMatch: "full"},
