@@ -167,6 +167,25 @@ Die Rezepte Schritte können per Drag and Drop sortiert werden.
 Die Rezept bearbeiten Seite ist die gleiche wie die Rezept erstellen Seite, jedoch werden die Felder mit den Daten des
 Rezepts gefüllt.
 
+### Rezept anzeigen
+
+Die Rezeptseite zeigt ein großes Bild des Rezepts. Darunter befindet sich die Beschreibung, die Zutaten und die Schritte.
+
+
+## Integration von OpenAI
+Mit diesem Projekt wollte ich mal eine Anbindung an eine KI ausprobieren.  
+Hierfür habe ich in zwei Endpoints eine Anbindung an die OpenAI API eingebaut.  
+
+Im Ordner promptTemplates befinden sich Texte welche an die AI Endpoints geschickt werden.
+### Nachbearbeitung eines Importierten Rezepts
+Für das importieren von Rezepten anhand einer Url nutze ich die Bibliothek `recipe-scrapers`.
+Diese Bibliothek ist sehr gut, jedoch werden Zutaten nicht in "amount" und "name" aufgeteilt, sondern als ein einzelner String.  
+Diesen String zu trennen ginge zwar auch mit regulären Ausdrücken, jedoch gibt es da viele Edge Cases.
+Deshalb wird der String an OpenAI geschickt, und die AI soll den String in "amount" und "name" aufteilen.
+
+### Generieren von Rezeptthumnails
+Ich wollte auch Bildgenerierung ausprobieren, und habe deswegen einen Button auf der Rezept erstellen/ bearbeiten Seite eingebaut, welcher ein Rezeptthumnail generiert.
+Hierfür wird die aktuelle JSON Repräsentation des Rezepts an 
 
 
 

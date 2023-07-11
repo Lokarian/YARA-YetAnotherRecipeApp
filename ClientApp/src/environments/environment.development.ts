@@ -1,3 +1,3 @@
 export const environment = {
-  backendUrl: 'http://192.168.178.143:8000/api/',
+  backendUrl: 'http://127.0.0.1:8000/api/',
 };
