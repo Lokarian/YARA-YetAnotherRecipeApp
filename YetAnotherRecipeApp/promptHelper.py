@@ -50,7 +50,6 @@ def run_chat_task(task_name, input_text):
             {"role": "user", "content": input_text}
         ]
     )
-    logger.info(result)
     return result['choices'][0]['message']['content']
 
 

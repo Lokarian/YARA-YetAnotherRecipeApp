@@ -5,7 +5,7 @@ Demo: [https://reithmeir.duckdns.org:8888/](https://reithmeir.duckdns.org:8888/)
 ## Motivation
 
 Meine Freundin und ich haben dass Problem dass wir öfters Rezepte auf Webseiten finden,
-welche wir eigentlich gut finden, aber diese das nächste mal wieder zu finden stellt sich als schwierig heraus.
+welche wir eigentlich gut finden. Diese aber das nächste mal wieder zu finden stellt sich als schwierig heraus.
 Wir speichern sie aktuell in einer WhatsApp Gruppe, aber das ist nicht wirklich praktisch.  
 Daher habe ich mich entschieden eine kleine Webapp zu schreiben, in welcher wir Rezepte speichern können.
 
@@ -384,7 +384,7 @@ priorisiert wurden.
 
 
 ## Roadmap/TODOs
-
+- **Backend:** Umsteigen auf GUIDs als IDs; aktuell werden die IDs als Integer gespeichert, was zu Problemen führen kann.
 - **Backend:** Vereinheitlichen von Serializern; aktuell sind unterschiedliche Serializer Typen eingesetzt
 - **Backend:** Entfernen von Django Template Code etc. Das Projekt wurde mit Django Templates gestartet, und dann auf
   Angular umgestellt. Es gibt noch einige Überreste von Django Templates, welche entfernt werden müssen.

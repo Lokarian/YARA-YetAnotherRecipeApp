@@ -1,5 +1,6 @@
 from io import BytesIO
 
+import re
 import requests
 from PIL import Image
 from django.contrib.auth.models import User
@@ -200,8 +201,13 @@ def process_url(request):
         json_obj = scraper.to_json()
     try:
         # try to parse the ingredients with openai integration
-        parsed_ingredients = run_edit_task("ingredient_amount_seperation",
+        parsed_ingredients = run_chat_task("ingredient_amount_seperation",
                                            json.dumps(json_obj['ingredients'], ensure_ascii=False))
+        # remove everything before the first { or [
+        parsed_ingredients = re.sub(r'^.*?[\{\[]', '[', parsed_ingredients)
+        # remove everything after the last } or ]
+        parsed_ingredients = re.sub(r'[\}\]].*?$', ']', parsed_ingredients)
+
         loaded_ingredients = json.loads(parsed_ingredients)
         # if the loaded ingredients have a top level key named "ingredients" which has an array as value, use that array
         if 'ingredients' in loaded_ingredients and isinstance(loaded_ingredients['ingredients'], list):
