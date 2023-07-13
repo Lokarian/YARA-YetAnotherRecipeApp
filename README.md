@@ -24,24 +24,26 @@ Die ursprüngliche Version soll nur die wichtigsten Features haben, welche wir b
 Für das Backend war die Vorgabe, dass es in Python geschrieben sein soll.  
 Deshalb habe ich mich für Django entschieden, da ich davon schon viel Gutes gehört habe.  
 Da ich aber ein reaktiveres Frontend haben wollte, und nicht nur Serverseitiges Rendering nutzen wollte, habe ich mich
-für Django Rest Framework entschieden, welches eine REST API für Django bereitstellt.  
-Für das Frontend habe ich mich für Angular entschieden, da ich schon erste Erfahrungen damit gemacht habe, und es mir
-gut gefällt.  
+für Django Rest Framework entschieden, mit welchem eine REST API erstellt werden kann.
+Für das Frontend habe ich mich für Angular entschieden, da ich damit schon erste Erfahrungen gemacht habe, und es mir
+bis jetzt gut gefällt.
 Als Datenbank habe ich mich für Postgres entschieden, da ich den Server auf meinem Raspberry Pi laufen lassen möchte, und
-es für Postgres einen Docker Container gibt, welcher auf dem ARM Prozessoren läuft.  
+es für Postgres einen Docker Container gibt, welcher auf ARM läuft.
 Als Deployment Umgebung habe ich mich für einen Docker Compose Stack entschieden, da ich so die einzelnen Komponenten
 einfach hochfahren kann, und es die Abgabe des Projektes vereinfacht.
 
 ## Installation
 
+- Bauen des Fronends mit `npm install` und `npm run build` in ClientApp
+- Erstellen einer `fullchain.pem` und `privkey.pem` Datei für den Nginx Container
 - Erstellen der .env Datei aus der .env.sample Datei
 - Anpassen der .env Datei
-- Ausführen von `docker-compose up -d`
+- Ausführen von `docker-compose up`
 
 ## Datenmodell
 
 Für die Nutzerverwaltung wird das Django User Model verwendet.  
-Das Superuser Model wird in allen Endpoints unterstützt, und erlaubt das Umgehen der Berechtigungen.
+Das Superuser Model wird in allen Endpoints unterstützt, und erlaubt das Umgehen der Berechtigungensprüfung.
 
 Das Datenmodell besteht aus den folgenden Models:
 ![Datenmodell](./assets/data_model.png)
@@ -398,13 +400,46 @@ die Schritte ein Bild haben, das hat aber zeitlich nicht mehr geklappt.
 - `generateRecipeThumbnail/`  
   Create a Thumbnail for a recipe using AI  
   **accepts:** {"recipe_json": "..."}  
-  **returns:** ["base64String",...]
+  **returns:** a array of base64 encoded images
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "items": [
+    {
+      "type": "string"
+    }
+  ]
+}
+```
 - `login/`  
   **accepts:** {"username": "username", "password": "password"}  
-  **returns:** {"token": "token"}
+  **returns:** 
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "token": {
+      "type": "string"
+    }
+  }
+}
+```
 - `register/`
   **accepts:** {"username": "username", "password": "password"}  
-  **returns:** {"token": "token"}
+  **returns:** 
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "token": {
+      "type": "string"
+    }
+  }
+}
+```
 
 ## Frontend
 
@@ -439,7 +474,7 @@ Hierfür werden folgende Komponenten verwendet:
 - `notification.component.ts`: Komponente welche oben rechts Benachrichtigungen als Toast anzeigt.
 
 ### Navigation Bar
-
+![img.png](assets/navigationbar.png)  
 Die App ist hauptsächlich für mobile Geräte gedacht, und hat deswegen eine Navigation bar am unteren Bildschirmrand.  
 An dieser kann:
 
@@ -447,16 +482,19 @@ An dieser kann:
 - Sich ausloggen
 - Ein neue Rezept erstellen
 - Dummy Button
+- Back Button
 
 Damit Content nicht von der Navigation bar verdeckt wird, wird der Content um die Höhe der Navigation bar nach oben
 verschoben und die Navigation bar hat einen verdeckenden Hintergrund welcher einen übergang zur Transparenz hat.
 
 ### Startseite
+![img.png](assets/landingPage.png)
 
 Auf der Startseite werden aktuell eine Liste aller Kochbücher angezeigt, auf welche der Nutzer Zugriff hat.  
 Hier war eigentlich geplant, dass dem Nutzer rezepte vor geschlagen werden. Dies wurde aber noch nicht umgesetzt.
 
 ### Rezeptbuch
+![img.png](assets/recipeList.png)
 
 Die Rezeptbuch Seite zeigt alle Rezepte eines Rezeptbuchs an.  
 Oben befindet sich eine Suchleiste, welche die Rezepte nach dem Titel filtert.
@@ -464,6 +502,7 @@ Rezepte haben eine Bildvorschau, den Titel und die Beschreibung.
 Hat der Nutzer bearbeitungsrechte, kann er die Rezepte bearbeiten, und löschen.
 
 ### Rezept Erstellen
+![img.png](assets/createRecipe.png)
 
 Die Rezepte erstellen Seite erlaubt es dem Nutzer ein neues Rezept zu erstellen oder zu importieren.
 Oben kann der Nutzer eine URL zu einem Rezept eingeben, welches dann importiert wird und die anderen Felder automatisch
@@ -477,6 +516,7 @@ Die Rezept bearbeiten Seite ist die gleiche wie die Rezept erstellen Seite, jedo
 Rezepts gefüllt.
 
 ### Rezept anzeigen
+![img.png](assets/recipeView.png)
 
 Die Rezeptseite zeigt ein großes Bild des Rezepts. Darunter befindet sich die Beschreibung, die Zutaten und die
 Schritte.
