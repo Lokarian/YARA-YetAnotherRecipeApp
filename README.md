@@ -1,6 +1,5 @@
 # YARA - Yet another recipe app
 
-Demo: [https://reithmeir.duckdns.org:8888/](https://reithmeir.duckdns.org:8888/)
 
 ## Motivation
 
@@ -81,7 +80,7 @@ die Schritte ein Bild haben, das hat aber zeitlich nicht mehr geklappt.
   Get the user object for the currently authenticated user  
   **returns:**
 
-```
+```json
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -108,7 +107,7 @@ die Schritte ein Bild haben, das hat aber zeitlich nicht mehr geklappt.
   **accepts qp:** page:int, search:string  
   **returns:**
 
-```
+```json
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
@@ -148,17 +147,160 @@ die Schritte ein Bild haben, das hat aber zeitlich nicht mehr geklappt.
 - `recipeBooks/`  
   Get all recipebooks for the current user, can be filter to get only recipebooks where the user has write access  
   **accepts qp:** write:boolean  
-  **returns:** TODO
+  **returns:** 
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "items": [
+    {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "users": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "access_level": {
+                  "type": "string"
+                },
+                "user_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+```
 - `recipeBooks/:id/`  
-  Return a single recipebook, contains more detail than list view, does not contain recipes  
-  **returns:** TODO
+  Return a single recipebook, currently returns same schema as list view
 - `recipes/:id/`  
   Return a single recipe, contains more detail than list view    
-  **returns:** TODO
+  **returns:** 
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "amount": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "steps": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "description": {
+              "type": "string"
+            },
+            "step_number": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    },
+    "image": {
+      "type": "string"
+    },
+    "recipe_book": {
+      "type": "integer"
+    }
+  }
+}
+```
 - `recipes/`  
   Get all recipes for the current user, can be filtered by recipebook and by a search string  
   **accepts qp:** recipe_book:int, search:string  
-  **returns:** TODO
+  **returns:** 
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "count": {
+      "type": "integer"
+    },
+    "next": {
+      "type": "null"
+    },
+    "previous": {
+      "type": "null"
+    },
+    "results": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "image": {
+              "type": "string"
+            },
+            "recipe_book": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```
 
 ### POST
 
@@ -168,7 +310,7 @@ die Schritte ein Bild haben, das hat aber zeitlich nicht mehr geklappt.
   **accepts:** `{"url": "string"}`  
   **returns:**
 
-```
+```json
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",

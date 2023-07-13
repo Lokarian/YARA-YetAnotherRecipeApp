@@ -110,6 +110,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = RecipePagination
+    list_serializer_class = RecipeListSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return self.list_serializer_class
+        return self.serializer_class
 
     def list(self, request, *args, **kwargs):
         # Check if the user is a superuser, otherwise only return recipes from recipebooks the user has access to
