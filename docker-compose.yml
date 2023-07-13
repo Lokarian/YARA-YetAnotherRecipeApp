@@ -7,32 +7,34 @@ services:
       dockerfile: Dockerfile
     ports:
       - '8000:8000'
-    volumes:
-      - ${CERTS_FOLDER}:/ssl  # Mount the folder containing your SSL certificates
     depends_on:
       - db
     env_file:
       - .env
 
   db:
-    image: mariadb
+    image: postgres
     environment:
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - '5432:5432'
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/postgresql/data
   nginx:
     image: nginx
     ports:
       - '80:80'
       - '443:443'
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ${NGINX_CONF_FILE}:/etc/nginx/conf.d/default.conf
       - ${CERTS_FOLDER}:/ssl
-      - C:/temp:/app/static
+      - ${FRONTEND_DIST_FOLDER}:/app/static
     depends_on:
       - django
+    env_file:
+      - .env
+
 volumes:
   db_data:

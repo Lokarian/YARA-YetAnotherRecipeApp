@@ -3,9 +3,11 @@ django-tailwind
 pillow
 django-cleanup
 djangorestframework
+mysqlclient
 markdown
 django-filter
 django-cors-headers
 recipe-scrapers
 openai
 gunicorn
+psycopg2

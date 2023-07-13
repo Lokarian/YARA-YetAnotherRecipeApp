@@ -167,12 +167,12 @@ export class RecipeCreatePage implements OnInit {
     })));
     if(this.existingRecipe){
       this.requestService.put(`recipes/${this.existingRecipe.id}/`, formData).subscribe((response) => {
-        this.router.navigate(["/recipes", this.existingRecipe.id]);
+        this.router.navigate(["/recipe", this.existingRecipe.id]);
       });
     }
     else{
       this.requestService.post("recipes/", formData).subscribe((response:any) => {
-        this.router.navigate(["/recipes", response.id]);
+        this.router.navigate(["/recipe", response.id]);
       });
     }
 

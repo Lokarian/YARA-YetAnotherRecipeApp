@@ -27,7 +27,16 @@ SECRET_KEY = 'django-insecure-f!lds9kqgp%(m&o!t7yb#$d+x&t0pbb&vi-1!&=qffol8scjce
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 APPEND_SLASH = False
-ALLOWED_HOSTS = ["reithmeir.duckdns.org", "127.0.0.1"]
+
+host = os.environ.get('HOSTNAME')
+hostport = os.environ.get('HOSTPORT')
+print("port:")
+print(hostport)
+if hostport is not None:
+    allowed_hosts = [f"{host}:{hostport}", "127.0.0.1"]
+else:
+    allowed_hosts = [host, "127.0.0.1"]
+
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
@@ -84,8 +93,12 @@ WSGI_APPLICATION = 'YetAnotherRecipeApp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': 'db',
+        'PORT': '5432',
     }
 }
 

@@ -16,6 +16,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return user
 
 
+class OwnUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'groups', 'id']
+
+
+
 class UserListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User

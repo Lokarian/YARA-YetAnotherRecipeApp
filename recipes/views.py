@@ -55,7 +55,7 @@ class RecipeBookViewSet(viewsets.ModelViewSet):
 
         # if queryparameter write is set to true, only return recipebooks with full access
         if request.query_params.get('write') == 'true':
-            recipe_book_accesses = recipe_book_accesses.filter(access_level="Full")
+            recipe_book_accesses = recipe_book_accesses.filter(access_level="F")
         # Get the recipe book IDs for the user's accesses
         recipe_book_ids = recipe_book_accesses.values_list('recipebook_id', flat=True)
 
@@ -73,6 +73,7 @@ class RecipeBookViewSet(viewsets.ModelViewSet):
         for user in users:
             user_obj = User.objects.get(username=user['username'])
             access_level = user['access_level']
+            access_level = 'F' if access_level == 'Full' else 'R'
             RecipeBookAccess.objects.create(user=user_obj, recipebook=recipe_book, access_level=access_level)
         # return with data serialized by serializer_class
         return Response(status=status.HTTP_201_CREATED, data=self.serializer_class(recipe_book).data)
@@ -81,7 +82,7 @@ class RecipeBookViewSet(viewsets.ModelViewSet):
         # check for write access
         book_access = RecipeBookAccess.objects.get(user=request.user, recipebook=kwargs['pk'])
         # if superuser or write access
-        if request.user.is_superuser or book_access.access_level == 'Full':
+        if request.user.is_superuser or book_access.access_level == 'F':
             super().update(request, *args, **kwargs)
             # remove all current accesses and add the new ones
             recipe_book = RecipeBook.objects.get(id=kwargs['pk'])
@@ -145,7 +146,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if not recipeBook_id:
                 return Response(status=status.HTTP_403_FORBIDDEN)
             book_access = RecipeBookAccess.objects.get(user=request.user, recipebook_id=recipeBook_id)
-            if book_access.access_level != 'Full':
+            if book_access.access_level != 'F':
                 return Response(status=status.HTTP_403_FORBIDDEN)
 
         recipe = Recipe(title=request.data['title'], description=request.data['description'],

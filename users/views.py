@@ -68,7 +68,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def current(self, request, *args, **kwargs):
-        serializer = self.get_serializer(request.user)
+        serializer = OwnUserSerializer(request.user)
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):

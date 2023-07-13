@@ -1,5 +1,7 @@
 # YARA - Yet another recipe app
 
+Demo: [https://reithmeir.duckdns.org:8888/](https://reithmeir.duckdns.org:8888/)
+
 ## Motivation
 
 Meine Freundin und ich haben dass Problem dass wir öfters Rezepte auf Webseiten finden,
@@ -75,27 +77,192 @@ die Schritte ein Bild haben, das hat aber zeitlich nicht mehr geklappt.
 
 ### GET
 
-- `recipeBooks/`
+- `users/current/`  
+  Get the user object for the currently authenticated user  
+  **returns:**
 
->
+```
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "groups": {
+      "type": "array",
+      "items": {}
+    },
+    "id": {
+      "type": "integer"
+    }
+  }
+}
+``` 
 
-- `users/?page=1`
-- `recipeBooks/${idParam}/`
-- `recipeBooks/?write=true`
-- `recipes/${this.activatedRoute.snapshot.params["id"]}/`
-- `recipes/${this.existingRecipe.id}/`
-- `recipeBooks/${data["id"]}/`
-- `recipes/${data["id"]}/`
-- `users/current/`
+- `users/`  
+  Get a paginated list of all users, can be filtered by username    
+  **accepts qp:** page:int, search:string  
+  **returns:**
+
+```
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "count": {
+      "type": "integer"
+    },
+    "next": {
+      "type": "null"
+    },
+    "previous": {
+      "type": "null"
+    },
+    "results": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+- `recipeBooks/`  
+  Get all recipebooks for the current user, can be filter to get only recipebooks where the user has write access  
+  **accepts qp:** write:boolean  
+  **returns:** TODO
+- `recipeBooks/:id/`  
+  Return a single recipebook, contains more detail than list view, does not contain recipes  
+  **returns:** TODO
+- `recipes/:id/`  
+  Return a single recipe, contains more detail than list view    
+  **returns:** TODO
+- `recipes/`  
+  Get all recipes for the current user, can be filtered by recipebook and by a search string  
+  **accepts qp:** recipe_book:int, search:string  
+  **returns:** TODO
 
 ### POST
 
-- `recipeBooks/`
-- `recipes/`
 - `processUrl/`
-- `generateRecipeThumbnail/`
-- `login/`
+  Process a URL to a website with a recipe, returns JSON with recipe data
+
+  **accepts:** `{"url": "string"}`  
+  **returns:**
+
+```
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "author": {
+      "type": "string"
+    },
+    "canonical_url": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "cook_time": {
+      "type": "number"
+    },
+    "description": {
+      "type": "string"
+    },
+    "host": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "amount": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "amount"
+          ]
+        }
+      ]
+    },
+    "instructions": {
+      "type": "string"
+    },
+    "instructions_list": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "language": {
+      "type": "string"
+    },
+    "nutrients": {
+      "type": "object"
+    },
+    "prep_time": {
+      "type": "number"
+    },
+    "ratings": {
+      "type": "number"
+    },
+    "site_name": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "total_time": {
+      "type": "number"
+    },
+    "yields": {
+      "type": "string"
+    }
+  }
+}
+```
+
+- `generateRecipeThumbnail/`  
+  Create a Thumbnail for a recipe using AI  
+  **accepts:** {"recipe_json": "..."}  
+  **returns:** ["base64String",...]
+- `login/`  
+  **accepts:** {"username": "username", "password": "password"}  
+  **returns:** {"token": "token"}
 - `register/`
+  **accepts:** {"username": "username", "password": "password"}  
+  **returns:** {"token": "token"}
 
 ## Frontend
 
@@ -169,23 +336,55 @@ Rezepts gefüllt.
 
 ### Rezept anzeigen
 
-Die Rezeptseite zeigt ein großes Bild des Rezepts. Darunter befindet sich die Beschreibung, die Zutaten und die Schritte.
-
+Die Rezeptseite zeigt ein großes Bild des Rezepts. Darunter befindet sich die Beschreibung, die Zutaten und die
+Schritte.
 
 ## Integration von OpenAI
+
 Mit diesem Projekt wollte ich mal eine Anbindung an eine KI ausprobieren.  
-Hierfür habe ich in zwei Endpoints eine Anbindung an die OpenAI API eingebaut.  
+Hierfür habe ich in zwei Endpoints eine Anbindung an die OpenAI API eingebaut.
 
 Im Ordner promptTemplates befinden sich Texte welche an die AI Endpoints geschickt werden.
+
 ### Nachbearbeitung eines Importierten Rezepts
+
 Für das importieren von Rezepten anhand einer Url nutze ich die Bibliothek `recipe-scrapers`.
-Diese Bibliothek ist sehr gut, jedoch werden Zutaten nicht in "amount" und "name" aufgeteilt, sondern als ein einzelner String.  
+Diese Bibliothek ist sehr gut, jedoch werden Zutaten nicht in "amount" und "name" aufgeteilt, sondern als ein einzelner
+String.  
 Diesen String zu trennen ginge zwar auch mit regulären Ausdrücken, jedoch gibt es da viele Edge Cases.
 Deshalb wird der String an OpenAI geschickt, und die AI soll den String in "amount" und "name" aufteilen.
 
 ### Generieren von Rezeptthumnails
-Ich wollte auch Bildgenerierung ausprobieren, und habe deswegen einen Button auf der Rezept erstellen/ bearbeiten Seite eingebaut, welcher ein Rezeptthumnail generiert.
-Hierfür wird die aktuelle JSON Repräsentation des Rezepts an 
+
+Ich wollte auch Bildgenerierung ausprobieren, und habe deswegen einen Button auf der Rezept erstellen / bearbeiten Seite
+eingebaut, welcher ein Rezeptthumnail generiert.
+Hierfür wird die aktuelle JSON Repräsentation des Rezepts an ein auf "gpt-3.5-turbo" basierendes Chat Model geschickt,
+welches
+die Aufgabe hat einen Prompt für ein Rezeptthumnail zu erstellen.
+Dieser Prompt wird dann an ein auf "davinci" basierendes Bildgenerierungs Model geschickt, welches ein 1024x1024 Bild
+generiert.  
+Dieses wird dann dem Nutzer im Frontend angezeigt und er kann speichern oder neu generieren.
+
+## Known Issues
+
+Der Zustand der Anwendung ist aktuell noch eher der eines "MVP", und es gibt noch einige Probleme welche nicht
+priorisiert wurden.
+
+- **Frontend:** Authentication, ob Nutzer auf Seite zugreifen darf überprüft nur ob ein Token vorhanden ist, nicht ob
+  dieser gültig ist.
+- **Frontend:** Profil Button in Navigation Bar ist noch nicht implementiert.
+- **Frontend:** Rezeptthumnail nimmt nicht volle Breite ein, wenn das Bild eine geringere Breite als der Container hat.
+- **Frontend:** Generelles UI ist nicht sehr intuitiv/ Material Design wurde nicht strikt eingehalten.
+
+## Roadmap/TODOs
+
+- **Backend:** Vereinheitlichen von Serializern; aktuell sind unterschiedliche Serializer Typen eingesetzt
+- **Backend:** Entfernen von Django Template Code etc. Das Projekt wurde mit Django Templates gestartet, und dann auf
+  Angular umgestellt. Es gibt noch einige Überreste von Django Templates, welche entfernt werden müssen.
+- **Backend:** Implementieren von Tests; aktuell gibt es keine Endpoint Tests.
+- **Backend:** Implementieren von CI/CD; aktuell wird das Projekt manuell deployed.
+- **Backend:** Implementieren von OpenAPI; aktuell gibt nur die manuell erstellte API Dokumentation hier im README.md
+- **Frontend:** Umsteigen auf Codegenerierung von OpenAPI; aktuell sind alle Models untyped, was eigentlich nicht ins 
 
 
 
