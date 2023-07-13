@@ -28,8 +28,8 @@ Da ich aber ein reaktiveres Frontend haben wollte, und nicht nur Serverseitiges 
 für Django Rest Framework entschieden, welches eine REST API für Django bereitstellt.  
 Für das Frontend habe ich mich für Angular entschieden, da ich schon erste Erfahrungen damit gemacht habe, und es mir
 gut gefällt.  
-Als Datenbank habe ich mich für MariaDB entschieden, da ich den Server auf meinem Raspberry Pi laufen lassen möchte, und
-es für MariaDB einen Docker Container gibt, welcher auf dem ARM Prozessoren läuft.  
+Als Datenbank habe ich mich für Postgres entschieden, da ich den Server auf meinem Raspberry Pi laufen lassen möchte, und
+es für Postgres einen Docker Container gibt, welcher auf dem ARM Prozessoren läuft.  
 Als Deployment Umgebung habe ich mich für einen Docker Compose Stack entschieden, da ich so die einzelnen Komponenten
 einfach hochfahren kann, und es die Abgabe des Projektes vereinfacht.
 
@@ -375,6 +375,10 @@ priorisiert wurden.
 - **Frontend:** Profil Button in Navigation Bar ist noch nicht implementiert.
 - **Frontend:** Rezeptthumnail nimmt nicht volle Breite ein, wenn das Bild eine geringere Breite als der Container hat.
 - **Frontend:** Generelles UI ist nicht sehr intuitiv/ Material Design wurde nicht strikt eingehalten.
+- **Backend:** OpenAI Integration funktioniert nicht konsistent; das generierte JSON folgt nicht immer dem selben
+  schema.
+  Bald gibt es bessere Integration für JSON Antworten mit OpenAI Functions, aber aktuell kann ich es noch nicht nutzen
+  und deshalb wurden ein paar Sonderfälle händisch abgefangen, jedoch kann es immer noch zu Fehlern kommen.
 
 ## Roadmap/TODOs
 
@@ -384,8 +388,19 @@ priorisiert wurden.
 - **Backend:** Implementieren von Tests; aktuell gibt es keine Endpoint Tests.
 - **Backend:** Implementieren von CI/CD; aktuell wird das Projekt manuell deployed.
 - **Backend:** Implementieren von OpenAPI; aktuell gibt nur die manuell erstellte API Dokumentation hier im README.md
-- **Frontend:** Umsteigen auf Codegenerierung von OpenAPI; aktuell sind alle Models untyped, was eigentlich nicht ins 
+- **Frontend:** Umsteigen auf Codegenerierung von OpenAPI; aktuell sind alle Models untyped, was eigentlich nicht ins
 
+## Fazit
 
+Insgesamt bin ich mit dem Ergebnis okay zufrieden.  
+Mir persönlich gefätt Django als Backend Technologie nicht zu 100%, da ich die Typsicherheit von Java/C# gewohnt bin.  
+Ich bin mir sicher, dass ich auch viele Dinge falsch gemacht habe, da ich bisherige Vorgehensweisen in Django verwenden
+wollte, obwohl diese nicht in das Django System passen.  
+Tailwind finde ich für styling sehr angenehm und werde ich glaube ich auch weiterhin verwenden, wenn es sich anbietet.  
+Inwieweit es sich aber für größere Projekte eignet, kann ich noch nicht sagen.  
+Beim nächsten Projekt werde ich auf jeden Fall mehr mit OpenAPI arbeiten und lieber von Beginn an Codegenerierung und
+CI/CD bzw mich ans Deployment kümmern.  
+Außerdem muss ich versuchen die Tests nicht zu vernachlässigen. Bei diesem Projekt ging es jetzt noch, da ich nur eine
+Handvoll Endpunkte habe, aber bei größeren Projekten schleichen sich da bestimmt schnell Fehler ein.
 
 

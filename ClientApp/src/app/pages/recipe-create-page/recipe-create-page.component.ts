@@ -141,7 +141,11 @@ export class RecipeCreatePage implements OnInit {
   getImageLink(): string | undefined {
     //if form has image return the sanitized url
     if (this.form.controls.image.value) {
-      return this.domSanitizer.bypassSecurityTrustUrl(URL.createObjectURL(this.form.controls.image.value)) as string;
+      let url=this.form.controls.image.value;
+      if(url.startsWith("http://") && window.location.protocol=="https:"){
+        url=url.replace("http://","https://");
+      }
+      return this.domSanitizer.bypassSecurityTrustUrl(URL.createObjectURL(url)) as string;
     }
     return undefined;
   }

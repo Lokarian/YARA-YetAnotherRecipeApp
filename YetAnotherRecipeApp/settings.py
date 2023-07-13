@@ -21,21 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-f!lds9kqgp%(m&o!t7yb#$d+x&t0pbb&vi-1!&=qffol8scjce'
+
+SECRET_KEY = os.environ.get('DJANGO_SECRET') if os.environ.get('DJANGO_SECRET') else 'django-insecure-f!lds9kqgp%(m&o!t7yb#$d+x&t0pbb&vi-1!&=qffol8scjce'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 APPEND_SLASH = False
 
-host = os.environ.get('HOSTNAME')
-hostport = os.environ.get('HOSTPORT')
-print("port:")
-print(hostport)
-if hostport is not None:
-    allowed_hosts = [f"{host}:{hostport}", "127.0.0.1"]
-else:
-    allowed_hosts = [host, "127.0.0.1"]
+#somehow passing the port to hostname does not work, current workaround is to allow all hosts, because it should be handled by nginx
+#ALLOWED_HOSTS = [os.environ.get('HOSTNAME')+":"+os.environ.get('HOSTPORT'), "127.0.0.1"]
+ALLOWED_HOSTS  = ["*"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 

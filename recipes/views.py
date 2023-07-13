@@ -91,6 +91,7 @@ class RecipeBookViewSet(viewsets.ModelViewSet):
             for user in users:
                 user_obj = User.objects.get(username=user['username'])
                 access_level = user['access_level']
+                access_level = 'F' if access_level == 'Full' else 'R'
                 RecipeBookAccess.objects.create(user=user_obj, recipebook=recipe_book, access_level=access_level)
             return Response(status=status.HTTP_200_OK, data=self.serializer_class(recipe_book).data)
         else:
@@ -201,7 +202,13 @@ def process_url(request):
         # try to parse the ingredients with openai integration
         parsed_ingredients = run_edit_task("ingredient_amount_seperation",
                                            json.dumps(json_obj['ingredients'], ensure_ascii=False))
-        json_obj['ingredients'] = json.loads(parsed_ingredients)
+        loaded_ingredients = json.loads(parsed_ingredients)
+        # if the loaded ingredients have a top level key named "ingredients" which has an array as value, use that array
+        if 'ingredients' in loaded_ingredients and isinstance(loaded_ingredients['ingredients'], list):
+            json_obj['ingredients'] = loaded_ingredients['ingredients']
+        else:
+            # otherwise use the whole loaded object
+            json_obj['ingredients'] = loaded_ingredients
     except Exception as e:
         # fallback to primitive ingredient list
         json_obj['ingredients'] = list(map(lambda x: {'amount': '', 'name': x}, json_obj['ingredients']))

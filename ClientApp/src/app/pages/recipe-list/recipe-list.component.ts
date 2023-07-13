@@ -1,17 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {RequestService} from "../../services/request.service";
-import {
-  BehaviorSubject,
-  combineLatest,
-  debounceTime,
-  first,
-  map,
-  Observable,
-  share,
-  Subject,
-  switchMap,
-  tap
-} from "rxjs";
+import {BehaviorSubject, combineLatest, debounceTime, first, map, Observable, share, switchMap, tap} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
 import {ActivatedRoute} from "@angular/router";
 import {CurrentUserService} from "../../services/current-user.service";
@@ -31,8 +20,9 @@ export class RecipeListComponent implements OnInit {
   public pageNumber$: BehaviorSubject<number> = new BehaviorSubject<number>(1);
   public searchTextSubject: BehaviorSubject<string> = new BehaviorSubject<string>("");
   //get recipebook id from url, make backend call to get recipes for that recipebook
-  public recipeBook$: Observable<any> = this.activatedRoute.params.pipe(switchMap((data) => this.requestService.get<any>(`recipeBooks/${data["id"]}/`).pipe(tap(book=>this.evaluateEditable(book)))));
-  public canEdit=false;
+  public recipeBook$: Observable<any> = this.activatedRoute.params.pipe(switchMap((data) => this.requestService.get<any>(`recipeBooks/${data["id"]}/`).pipe(tap(book => this.evaluateEditable(book)))));
+  public canEdit = false;
+
   constructor(
     private requestService: RequestService,
     private domSanitizer: DomSanitizer,
@@ -44,7 +34,7 @@ export class RecipeListComponent implements OnInit {
   ngOnInit() {
     this.recipes$ = combineLatest([this.pageNumber$.asObservable(), this.searchTextSubject.asObservable(), this.activatedRoute.params.pipe(map(x => x["id"]))]).pipe(
       debounceTime(300), // Add debounce time to avoid frequent API calls while typing
-      switchMap(([pageNumber, searchText,recipeBookId]) => {
+      switchMap(([pageNumber, searchText, recipeBookId]) => {
         return this.requestService
           .get<{
             count: number;
@@ -82,12 +72,15 @@ export class RecipeListComponent implements OnInit {
   }
 
   sanitizeImageUrl(imageUrl: string) {
+    if (imageUrl.startsWith("http://") && window.location.protocol == "https:") {
+      imageUrl = imageUrl.replace("http://", "https://");
+    }
     return this.domSanitizer.bypassSecurityTrustUrl(imageUrl);
   }
 
   private evaluateEditable(book: any) {
     this.currentUserService.currentUser$.pipe(first()).subscribe(user => {
-      this.canEdit = (book.users as any[]).some(userAccess => userAccess.user_id === user.id&&userAccess.access_level==="Full");
+      this.canEdit = (book.users as any[]).some(userAccess => userAccess.user_id === user.id && userAccess.access_level === "Full");
     });
   }
 
