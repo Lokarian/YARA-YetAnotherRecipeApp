@@ -379,6 +379,9 @@ priorisiert wurden.
   schema.
   Bald gibt es bessere Integration für JSON Antworten mit OpenAI Functions, aber aktuell kann ich es noch nicht nutzen
   und deshalb wurden ein paar Sonderfälle händisch abgefangen, jedoch kann es immer noch zu Fehlern kommen.
+- **Backend:** Anfragen an Openai mit zu viel Text schlagen Fehl; hier müsste nur der wichtige Teil des Textes
+  ausgewählt werden.
+
 
 ## Roadmap/TODOs
 

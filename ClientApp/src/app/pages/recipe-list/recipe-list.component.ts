@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {RequestService} from "../../services/request.service";
-import {BehaviorSubject, combineLatest, debounceTime, first, map, Observable, share, switchMap, tap} from "rxjs";
+import {BehaviorSubject,Subject, combineLatest, debounceTime, first, map, Observable, share, switchMap, tap} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
 import {ActivatedRoute} from "@angular/router";
 import {CurrentUserService} from "../../services/current-user.service";
@@ -22,6 +22,7 @@ export class RecipeListComponent implements OnInit {
   //get recipebook id from url, make backend call to get recipes for that recipebook
   public recipeBook$: Observable<any> = this.activatedRoute.params.pipe(switchMap((data) => this.requestService.get<any>(`recipeBooks/${data["id"]}/`).pipe(tap(book => this.evaluateEditable(book)))));
   public canEdit = false;
+  private reload$ = new Subject<void>();
 
   constructor(
     private requestService: RequestService,
@@ -32,7 +33,7 @@ export class RecipeListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.recipes$ = combineLatest([this.pageNumber$.asObservable(), this.searchTextSubject.asObservable(), this.activatedRoute.params.pipe(map(x => x["id"]))]).pipe(
+    this.recipes$ = combineLatest([this.pageNumber$.asObservable(), this.searchTextSubject.asObservable(), this.activatedRoute.params.pipe(map(x => x["id"])),this.reload$]).pipe(
       debounceTime(300), // Add debounce time to avoid frequent API calls while typing
       switchMap(([pageNumber, searchText, recipeBookId]) => {
         return this.requestService
@@ -84,7 +85,11 @@ export class RecipeListComponent implements OnInit {
     });
   }
 
-  delete(recipe: any) {
-
+  delete(recipe: any,event:any) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.requestService.delete(`recipes/${recipe.id}/`).subscribe(() => {
+      this.reload$.next();
+    });
   }
 }
