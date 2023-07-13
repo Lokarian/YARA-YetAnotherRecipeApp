@@ -22,7 +22,7 @@ export class RecipeListComponent implements OnInit {
   //get recipebook id from url, make backend call to get recipes for that recipebook
   public recipeBook$: Observable<any> = this.activatedRoute.params.pipe(switchMap((data) => this.requestService.get<any>(`recipeBooks/${data["id"]}/`).pipe(tap(book => this.evaluateEditable(book)))));
   public canEdit = false;
-  private reload$ = new Subject<void>();
+  private reload$ = new Subject<number>(0);
 
   constructor(
     private requestService: RequestService,
@@ -89,7 +89,7 @@ export class RecipeListComponent implements OnInit {
     event.stopPropagation();
     event.preventDefault();
     this.requestService.delete(`recipes/${recipe.id}/`).subscribe(() => {
-      this.reload$.next();
+      this.reload$.next(this.reload$.value+1);
     });
   }
 }

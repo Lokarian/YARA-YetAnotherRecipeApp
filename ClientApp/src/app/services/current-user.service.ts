@@ -17,5 +17,5 @@ export class CurrentUserService {
       return this.requestService.get<any>(`users/current/`);
     }
     return of(null);
-  }));
+  }),share());
 }

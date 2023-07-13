@@ -389,6 +389,8 @@ priorisiert wurden.
 - **Backend:** Entfernen von Django Template Code etc. Das Projekt wurde mit Django Templates gestartet, und dann auf
   Angular umgestellt. Es gibt noch einige Überreste von Django Templates, welche entfernt werden müssen.
 - **Backend:** Implementieren von Tests; aktuell gibt es keine Endpoint Tests.
+- **Backend:** Erstellen von Usagelimits für OpenAI Endpunkte. Aktuell kann jeder autheticated Nutzer die OpenAI
+  Endpunkte nutzen, was zu hohen Kosten führen kann. (aktuell ist ein Kosten Limit von 1€/Monat eingestellt)
 - **Backend:** Implementieren von CI/CD; aktuell wird das Projekt manuell deployed.
 - **Backend:** Implementieren von OpenAPI; aktuell gibt nur die manuell erstellte API Dokumentation hier im README.md
 - **Frontend:** Umsteigen auf Codegenerierung von OpenAPI; aktuell sind alle Models untyped, was eigentlich nicht ins
