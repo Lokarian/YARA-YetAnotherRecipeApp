@@ -52,7 +52,11 @@ export class RecipeCreatePage implements OnInit {
           this.form.controls.steps.push(this.newStep({description: step.description}));
         });
         //get image from recipe.image as url, create file from it and set it as image
-        this.requestService.getBlobDirect(recipe.image).subscribe((response:any) => {
+        let url= recipe.image;
+        if(url.startsWith("http://") && window.location.protocol=="https:"){
+          url=url.replace("http://","https://");
+        }
+        this.requestService.getBlobDirect(url).subscribe((response:any) => {
           const file = new File([response], "image.png", {type: "image/png"});
           this.form.controls.image.setValue(file);
         });
@@ -141,11 +145,7 @@ export class RecipeCreatePage implements OnInit {
   getImageLink(): string | undefined {
     //if form has image return the sanitized url
     if (this.form.controls.image.value) {
-      let url=this.form.controls.image.value;
-      if(url.startsWith("http://") && window.location.protocol=="https:"){
-        url=url.replace("http://","https://");
-      }
-      return this.domSanitizer.bypassSecurityTrustUrl(URL.createObjectURL(url)) as string;
+      return this.domSanitizer.bypassSecurityTrustUrl(URL.createObjectURL(this.form.controls.image.value)) as string;
     }
     return undefined;
   }
